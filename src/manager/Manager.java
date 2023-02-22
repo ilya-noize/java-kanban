@@ -1,3 +1,10 @@
+package manager;
+
+import tasks.Epic;
+import tasks.Status;
+import tasks.SubTask;
+import tasks.Task;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -79,9 +86,7 @@ public class Manager {
      * Удаление всех задач
      */
     public void removeAllTasks() {
-        for (Task task : taskRegister.values()) {
-            deleteTaskByUIN(task.getID());
-        }
+        taskRegister.clear();
     }
 
     /**
@@ -194,7 +199,7 @@ public class Manager {
             int subTaskId = generateId++;
             subTask.setID(subTaskId);
             subTaskRegister.put(subTaskId, subTask);
-            epicRegister.get(referenceEpicId).getSequenceTask().add(subTaskId);
+            epicRegister.get(referenceEpicId).getIdsSubTask().add(subTaskId);
             return true;
         }
         return false;
@@ -221,7 +226,7 @@ public class Manager {
      */
     public boolean deleteEpicByUIN(int id) {
         if (epicRegister.containsKey(id)) {
-            if (epicRegister.get(id).getSequenceTask().size() != 0) {
+            if (epicRegister.get(id).getIdsSubTask().size() != 0) {
                 epicRegister.remove(id);
                 return true;
             }
@@ -239,8 +244,8 @@ public class Manager {
      */
     public boolean deleteSubTaskByUIN(int id) {
         if (subTaskRegister.containsKey(id)
-                && epicRegister.get(subTaskRegister.get(id).getEpicId()).getSequenceTask().contains(id)) {
-            epicRegister.get(subTaskRegister.get(id).getEpicId()).getSequenceTask().remove(id);
+                && epicRegister.get(subTaskRegister.get(id).getEpicId()).getIdsSubTask().contains(id)) {
+            epicRegister.get(subTaskRegister.get(id).getEpicId()).getIdsSubTask().remove(id);
             subTaskRegister.remove(id);
             return true;
         }
@@ -255,7 +260,7 @@ public class Manager {
     public List<SubTask> getSubTasksByEpic(int epicID) {
         List<SubTask> subTasksByEpic = new ArrayList<>();
         if (epicRegister.containsKey(epicID)) {
-            for (Integer subTaskId : getEpicById(epicID).getSequenceTask()) {
+            for (Integer subTaskId : getEpicById(epicID).getIdsSubTask()) {
                 subTasksByEpic.add(getSubTaskById(subTaskId));
             }
         }
@@ -278,20 +283,20 @@ public class Manager {
      */
     public void setEpicsStatus() {
         for (Epic epic : epicRegister.values()) {
-            List<Integer> sequenceTask = epic.getSequenceTask();
-            if (sequenceTask.isEmpty())
+            List<Integer> epicIdsSubTask = epic.getIdsSubTask();
+            if (epicIdsSubTask.isEmpty())
                 epic.setStatus(Status.NEW.getStatus());
             else {
                 int[] status = new int[]{0, 0, 0};
-                for (int subTaskUIN : sequenceTask) {
+                for (int subTaskId : epicIdsSubTask) {
                     for (Status s : Status.values()) {
-                        if (getSubTaskById(subTaskUIN).getStatus() == s.getStatus())
+                        if (getSubTaskById(subTaskId).getStatus() == s.getStatus())
                             status[s.getStatus()]++;
                     }
                 }
-                if (sequenceTask.size() == status[Status.NEW.getStatus()])
+                if (epicIdsSubTask.size() == status[Status.NEW.getStatus()])
                     epic.setStatus(Status.NEW.getStatus());
-                else if (sequenceTask.size() == status[Status.DONE.getStatus()])
+                else if (epicIdsSubTask.size() == status[Status.DONE.getStatus()])
                     epic.setStatus(Status.DONE.getStatus());
                 else epic.setStatus(Status.IN_PROGRESS.getStatus());
             }

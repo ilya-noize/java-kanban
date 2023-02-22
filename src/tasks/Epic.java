@@ -1,18 +1,21 @@
+package tasks;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Epic extends Task {
-    private List<Integer> sequenceTask = new ArrayList<>();
+    protected List<Integer> idsSubTask;
 
     public Epic(String title, String description) {
         super(title, description);
+        idsSubTask = new ArrayList<>();
     }
 
     public Epic() {
+        idsSubTask = new ArrayList<>();
     }
 
-    public List<Integer> getSequenceTask() {
-        return sequenceTask;
+    public List<Integer> getIdsSubTask() {
+        return idsSubTask;
     }
 
     @Override
@@ -21,8 +24,8 @@ public class Epic extends Task {
                 "title='" + this.getTitle() + '\'' +
                 ", description='" + this.getDescription() + '\'' +
                 ", status=" + this.getStatus() +
-                ", UIN=" + this.getUIN() +
-                ", sequenceTask=" + this.getSequenceTask() +
+                ", UIN=" + this.getID() +
+                ", idsSubTask=" + this.getIdsSubTask() +
                 '}';
     }
 }

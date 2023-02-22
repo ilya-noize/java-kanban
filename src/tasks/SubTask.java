@@ -1,3 +1,5 @@
+package tasks;
+
 public class SubTask extends Task{
     protected int epicId;
 
@@ -28,7 +30,7 @@ public class SubTask extends Task{
                 "title='" + this.getTitle() + '\'' +
                 ", description='" + this.getDescription() + '\'' +
                 ", status=" + this.getStatus() +
-                ", UIN=" + this.getID() +
+                ", id=" + this.getID() +
                 ", referenceToEpic=" + this.getEpicId() +
                 '}';
     }

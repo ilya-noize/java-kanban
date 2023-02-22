@@ -1,3 +1,8 @@
+import manager.Manager;
+import tasks.Epic;
+import tasks.SubTask;
+import tasks.Task;
+
 public class Main {
 
     public static void main(String[] args) {
@@ -18,18 +23,18 @@ public class Main {
         Manager manager = new Manager();
         for (String s : taskArray) {
             Task task = new Task(s,"");
-            manager.createTask(task);
+            manager.addTask(task);
         }
-        System.out.println(manager.showAllTasks());
+        System.out.println(manager.getAllTasks());
 
         //Тест связанных задач
         taskArray = tasks[1].split(";");
         Epic epic = new Epic(taskArray[0], "");
-        int epicUIN = manager.createEpic(epic);
+        int epicUIN = manager.addEpic(epic);
         for (int i = 1; i < taskArray.length; i++) {
             SubTask subTask = new SubTask(taskArray[i], "", epicUIN);
-            manager.createSubTask(subTask);
+            manager.addSubTask(subTask);
         }
-        System.out.println(manager.showAllSubTaskByEpic(epicUIN));
+        System.out.println(manager.getSubTasksByEpic(epicUIN));
     }
 }

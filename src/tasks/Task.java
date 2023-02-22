@@ -1,3 +1,5 @@
+package tasks;
+
 import java.util.Objects;
 
 /**
@@ -15,11 +17,11 @@ public class Task {
     protected String description;
     protected int status;
 
-    protected void setID(int id) {
+    public void setID(int id) {
         this.id = id;
     }
 
-    protected int getID() {
+    public int getID() {
         return id;
     }
 
