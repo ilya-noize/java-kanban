@@ -1,25 +1,25 @@
 public class SubTask extends Task{
-    private int referenceToEpic;
+    protected int epicId;
 
     /**
      *
      * @param title Название задачи
      * @param description Описание задачи
-     * @param referenceToEpic Принадлежность к главной задаче (epic)
+     * @param epicId Принадлежность к главной задаче (epic)
      */
-    public SubTask(String title, String description, int referenceToEpic) {
+    public SubTask(String title, String description, int epicId) {
         super(title, description);
-        this.referenceToEpic = referenceToEpic;
+        this.epicId = epicId;
     }
     public SubTask(){
     }
 
-    public int getReferenceToEpic() {
-        return referenceToEpic;
+    public int getEpicId() {
+        return epicId;
     }
 
-    public void setReferenceToEpic(int referenceToEpic) {
-        this.referenceToEpic = referenceToEpic;
+    public void setEpicId(int epicId) {
+        this.epicId = epicId;
     }
 
     @Override
@@ -28,8 +28,8 @@ public class SubTask extends Task{
                 "title='" + this.getTitle() + '\'' +
                 ", description='" + this.getDescription() + '\'' +
                 ", status=" + this.getStatus() +
-                ", UIN=" + this.getUIN() +
-                ", referenceToEpic=" + this.getReferenceToEpic() +
+                ", UIN=" + this.getID() +
+                ", referenceToEpic=" + this.getEpicId() +
                 '}';
     }
 }
