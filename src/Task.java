@@ -1,58 +1,66 @@
 import java.util.Objects;
 
+/**
+ * Класс Задача. Простейшая сущность системы управления задачами. Включает в себя 4 поля:
+ * <ul>
+ *     <li>id - Идентификатор задачи</li>
+ *     <li>title - заголовок (или название) задачи</li>
+ *     <li>description - Подробности (по желанию)</li>
+ *     <li>status - статус выполнения задачи</li>
+ * </ul>
+ */
 public class Task {
-    private String title;
-    private String description;
-    private int uniqueIdentificationNumber;
-    private int status;
+    protected int id;
+    protected String title;
+    protected String description;
+    protected int status;
 
-    protected void setUIN(int uniqueIdentificationNumber) {
-        this.uniqueIdentificationNumber = uniqueIdentificationNumber;
+    protected void setID(int id) {
+        this.id = id;
     }
 
-    protected int getUIN() {
-        return uniqueIdentificationNumber;
+    protected int getID() {
+        return id;
     }
 
-    /**
-     *
-     * @param title Название задачи
-     * @param description Описание задачи
-     */
     public Task(String title, String description) {
         this.title = title;
         this.description = description;
-        this.uniqueIdentificationNumber = hashCode();
+        this.id = hashCode();
         this.status = Status.NEW.getStatus();
     }
-    public Task(){
+
+    public Task() {
         this.title = "";
         this.description = "";
-        this.uniqueIdentificationNumber = hashCode();
+        this.id = hashCode();
         this.status = Status.NEW.getStatus();
     }
 
     public String getTitle() {
         return title;
     }
-    public boolean setTitle(String title) {
-        if (title == null) {
-            return false;//this.title = "";
-        }
-        this.title = title;
-        return true;
+
+    public void setTitle(String title) {
+        if (!title.isEmpty())
+            this.title = title;
     }
+
     public String getDescription() {
         return description;
     }
+
     public void setDescription(String description) {
-        this.description = description;
+        if (description.isEmpty()) this.description = "";
+        else this.description = description;
     }
+
     public int getStatus() {
         return status;
     }
+
     public void setStatus(int status) {
-        if(status == Status.NEW.getStatus() || status == Status.IN_PROGRESS.getStatus()
+        if (status == Status.NEW.getStatus() || status == Status.IN_PROGRESS.getStatus()
                 || status == Status.DONE.getStatus())
             this.status = status;
     }
@@ -63,7 +71,7 @@ public class Task {
                 "title='" + this.getTitle() + '\'' +
                 ", description='" + this.getDescription() + '\'' +
                 ", status=" + this.getStatus() +
-                ", UIN=" + this.getUIN() +
+                ", id=" + this.getID() +
                 "}";
     }
 
