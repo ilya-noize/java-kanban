@@ -15,7 +15,7 @@ public class Task {
     protected int id;
     protected String title;
     protected String description;
-    protected int status;
+    protected Status status;
 
     public void setID(int id) {
         this.id = id;
@@ -29,14 +29,14 @@ public class Task {
         this.title = title;
         this.description = description;
         this.id = hashCode();
-        this.status = Status.NEW.getStatus();
+        this.status = Status.NEW;
     }
 
     public Task() {
         this.title = "";
         this.description = "";
         this.id = hashCode();
-        this.status = Status.NEW.getStatus();
+        this.status = Status.NEW;
     }
 
     public String getTitle() {
@@ -57,13 +57,13 @@ public class Task {
         else this.description = description;
     }
 
-    public int getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
-        if (status == Status.NEW.getStatus() || status == Status.IN_PROGRESS.getStatus()
-                || status == Status.DONE.getStatus())
+    public void setStatus(Status status) {
+        if (status == Status.NEW || status == Status.IN_PROGRESS
+                || status == Status.DONE)
             this.status = status;
     }
 

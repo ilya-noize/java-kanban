@@ -285,20 +285,22 @@ public class Manager {
         for (Epic epic : epicRegister.values()) {
             List<Integer> epicIdsSubTask = epic.getIdsSubTask();
             if (epicIdsSubTask.isEmpty())
-                epic.setStatus(Status.NEW.getStatus());
+                epic.setStatus(Status.NEW);
             else {
-                int[] status = new int[]{0, 0, 0};
+                int[] status = new int[]{0, 0};
                 for (int subTaskId : epicIdsSubTask) {
                     for (Status s : Status.values()) {
-                        if (getSubTaskById(subTaskId).getStatus() == s.getStatus())
-                            status[s.getStatus()]++;
+                        switch (s){
+                            case NEW: status[0]++; break;
+                            case DONE: status[1]++; break;
+                        }
                     }
                 }
-                if (epicIdsSubTask.size() == status[Status.NEW.getStatus()])
-                    epic.setStatus(Status.NEW.getStatus());
-                else if (epicIdsSubTask.size() == status[Status.DONE.getStatus()])
-                    epic.setStatus(Status.DONE.getStatus());
-                else epic.setStatus(Status.IN_PROGRESS.getStatus());
+                if (epicIdsSubTask.size() == status[0])
+                    epic.setStatus(Status.NEW);
+                else if (epicIdsSubTask.size() == status[1])
+                    epic.setStatus(Status.DONE);
+                else epic.setStatus(Status.IN_PROGRESS);
             }
         }
     }

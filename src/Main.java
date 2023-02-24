@@ -30,11 +30,12 @@ public class Main {
         //Тест связанных задач
         taskArray = tasks[1].split(";");
         Epic epic = new Epic(taskArray[0], "");
-        int epicUIN = manager.addEpic(epic);
+        int epicID = manager.addEpic(epic);
         for (int i = 1; i < taskArray.length; i++) {
-            SubTask subTask = new SubTask(taskArray[i], "", epicUIN);
+            SubTask subTask = new SubTask(taskArray[i], "", epicID);
             manager.addSubTask(subTask);
         }
-        System.out.println(manager.getSubTasksByEpic(epicUIN));
+        System.out.println(manager.getEpicById(epicID));
+        System.out.println(manager.getSubTasksByEpic(epicID));
     }
 }
