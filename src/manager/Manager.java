@@ -16,9 +16,9 @@ import java.util.Map;
  * @see #getAllTasks() Получение списка всех задач
  * @see #getAllEpics() Получение списка всех главных задач
  * @see #getAllSubTasks() Получение списка всех подзадач
- * @see #removeAllTasks() Удаление всех задач
- * @see #removeAllEpics() Удаление всех главных задач
- * @see #removeAllSubTasks() Удаление всех подзадач
+ * @see #deleteAllTasks() Удаление всех задач
+ * @see #deleteAllEpics() Удаление всех главных задач
+ * @see #deleteAllSubTasks() Удаление всех подзадач
  * @see #getTaskById(int)  Получение задачи по идентификатору;
  * @see #getEpicById(int)  Получение главной задачи по идентификатору;
  * @see #getSubTaskById(int)  Получение подзадачи по идентификатору;
@@ -28,17 +28,17 @@ import java.util.Map;
  * @see #updateTask(Task) Обновление задачи
  * @see #updateEpic(Epic) Обновление главной задачи
  * @see #updateSubTask(SubTask) Обновление подзадачи
- * @see #deleteTaskByUIN(int) Удаление задачи по идентификатору
- * @see #deleteEpicByUIN(int) Удаление главной задачи по идентификатору
- * @see #deleteSubTaskByUIN(int)  Удаление подзадачи по идентификатору
+ * @see #deleteTaskByID(int) Удаление задачи по идентификатору
+ * @see #deleteEpicByID(int) Удаление главной задачи по идентификатору
+ * @see #deleteSubTaskByID(int)  Удаление подзадачи по идентификатору
  * @see #getSubTasksByEpic(int) Получение списка всех подзадач определённого эпика.
  * @see #setEpicsStatus() Проверить статус главной задачи
  */
 public class Manager {
 
-    Map<Integer, Task> taskRegister = new HashMap<>();
-    Map<Integer, SubTask> subTaskRegister = new HashMap<>();
-    Map<Integer, Epic> epicRegister = new HashMap<>();
+    private final Map<Integer, Task> taskRegister = new HashMap<>();
+    private final Map<Integer, SubTask> subTaskRegister = new HashMap<>();
+    private final Map<Integer, Epic> epicRegister = new HashMap<>();
 
     private int generateId = 1;
 
@@ -85,25 +85,25 @@ public class Manager {
     /**
      * Удаление всех задач
      */
-    public void removeAllTasks() {
+    public void deleteAllTasks() {
         taskRegister.clear();
     }
 
     /**
      * Удаление всех главных задач.
      */
-    public void removeAllEpics() {
+    public void deleteAllEpics() {
         for (Epic epic : epicRegister.values()) {
-            deleteEpicByUIN(epic.getID());
+            deleteEpicByID(epic.getID());
         }
     }
 
     /**
      * Удаление всех подзадач.
      */
-    public void removeAllSubTasks() {
+    public void deleteAllSubTasks() {
         for (SubTask subTask : subTaskRegister.values()) {
-            deleteSubTaskByUIN(subTask.getID());
+            deleteSubTaskByID(subTask.getID());
         }
     }
 
@@ -136,9 +136,7 @@ public class Manager {
      * @param id идентификатор
      */
     public Task getTaskById(int id) {
-        if (taskRegister.containsKey(id))
-            return taskRegister.get(id);
-        return new Task();
+        return taskRegister.get(id);
     }
 
     /**
@@ -146,9 +144,7 @@ public class Manager {
      * @param id идентификатор
      */
     public Epic getEpicById(int id) {
-        if (epicRegister.containsKey(id))
-            return epicRegister.get(id);
-        return new Epic();
+        return epicRegister.get(id);
     }
 
     /**
@@ -156,22 +152,22 @@ public class Manager {
      * @param id идентификатор
      */
     public SubTask getSubTaskById(int id) {
-        if (subTaskRegister.containsKey(id))
-            return subTaskRegister.get(id);
-        return new SubTask();
+        return subTaskRegister.get(id);
     }
 
     /**
      * Создание задачи
+     * @param task объект задача
      */
-    public void addTask(Task task) {
+    public int addTask(Task task) {
         task.setID(generateId++);
         taskRegister.put(task.getID(), task);
+        return task.getID();
     }
 
     /**
      * Создание главной задачи
-     * @param epic Объект Главная задача
+     * @param epic объект Главная задача
      * @return Уникальный номер в Карте для связки с подзадачами
      */
     public int addEpic(Epic epic) {
@@ -193,24 +189,23 @@ public class Manager {
      * Иначе возвращаем ЛОЖЬ.
      * @param subTask Подзадача для главной задачи
      */
-    public boolean addSubTask(SubTask subTask) {
+    public int addSubTask(SubTask subTask) {
         int referenceEpicId = subTask.getEpicId();
         if (epicRegister.containsKey(referenceEpicId)) {
             int subTaskId = generateId++;
             subTask.setID(subTaskId);
             subTaskRegister.put(subTaskId, subTask);
             epicRegister.get(referenceEpicId).getIdsSubTask().add(subTaskId);
-            return true;
+            return subTask.getID();
         }
-        return false;
+        return (-1);
     }
 
     /**
      * Удаление задачи по идентификатору
      * @param id идентификатор
      */
-    public void deleteTaskByUIN(int id) {
-        if (taskRegister.containsKey(id))
+    public void deleteTaskByID(int id) {
             taskRegister.remove(id);
     }
 
@@ -224,14 +219,12 @@ public class Manager {
      * иначе вернуть ЛОЖЬ.
      * @param id идентификатор
      */
-    public boolean deleteEpicByUIN(int id) {
+    public void deleteEpicByID(int id) {
         if (epicRegister.containsKey(id)) {
             if (epicRegister.get(id).getIdsSubTask().size() != 0) {
                 epicRegister.remove(id);
-                return true;
             }
         }
-        return false;
     }
 
     /**
@@ -242,14 +235,12 @@ public class Manager {
      * @param id идентификатор
      * @return "Как всё прошло?"
      */
-    public boolean deleteSubTaskByUIN(int id) {
+    public void deleteSubTaskByID(int id) {
         if (subTaskRegister.containsKey(id)
                 && epicRegister.get(subTaskRegister.get(id).getEpicId()).getIdsSubTask().contains(id)) {
             epicRegister.get(subTaskRegister.get(id).getEpicId()).getIdsSubTask().remove(id);
             subTaskRegister.remove(id);
-            return true;
         }
-        return false;
     }
 
     /**
