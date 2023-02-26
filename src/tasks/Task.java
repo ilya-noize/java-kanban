@@ -62,9 +62,7 @@ public class Task {
     }
 
     public void setStatus(Status status) {
-        if (status == Status.NEW || status == Status.IN_PROGRESS
-                || status == Status.DONE)
-            this.status = status;
+        this.status = status;
     }
 
     @Override

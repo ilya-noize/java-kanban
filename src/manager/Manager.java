@@ -102,8 +102,8 @@ public class Manager {
      * Удаление всех подзадач.
      */
     public void deleteAllSubTasks() {
-        for (SubTask subTask : subTaskRegister.values()) {
-            deleteSubTaskByID(subTask.getID());
+        for (int i=0; subTaskRegister.isEmpty(); i++) {
+            deleteSubTaskByID(subTaskRegister.get(i).getID());
         }
     }
 
@@ -230,15 +230,19 @@ public class Manager {
     /**
      * Удаление подзадачи по УИН
      * <p>Если подзадача с таким УИН существует, то обращаемся к её главной задаче для удаления взаимосвязи
-     * и последующим удалением подзадачи из Карты, вернув ИСТИНУ.</p>
-     * Иначе ЛОЖЬ
+     * и последующим удалением подзадачи из Карты.</p>
      * @param id идентификатор
-     * @return "Как всё прошло?"
      */
     public void deleteSubTaskByID(int id) {
         if (subTaskRegister.containsKey(id)
                 && epicRegister.get(subTaskRegister.get(id).getEpicId()).getIdsSubTask().contains(id)) {
-            epicRegister.get(subTaskRegister.get(id).getEpicId()).getIdsSubTask().remove(id);
+            List<Integer> idsSubTask = epicRegister.get(subTaskRegister.get(id).getEpicId()).getIdsSubTask();
+            for (int i = 0; i < idsSubTask.size(); i++) {
+                if (idsSubTask.get(i) == id){
+                    idsSubTask.remove(i);
+                }
+            }
+            epicRegister.get(subTaskRegister.get(id).getEpicId()).setIdsSubTask(idsSubTask);
             subTaskRegister.remove(id);
         }
     }
@@ -275,16 +279,14 @@ public class Manager {
     public void setEpicsStatus() {
         for (Epic epic : epicRegister.values()) {
             List<Integer> epicIdsSubTask = epic.getIdsSubTask();
-            if (epicIdsSubTask.isEmpty())
+            if (epicIdsSubTask.isEmpty()){
                 epic.setStatus(Status.NEW);
-            else {
+            } else {
                 int[] status = new int[]{0, 0};
                 for (int subTaskId : epicIdsSubTask) {
-                    for (Status s : Status.values()) {
-                        switch (s){
-                            case NEW: status[0]++; break;
-                            case DONE: status[1]++; break;
-                        }
+                    switch (subTaskRegister.get(subTaskId).getStatus()){
+                        case NEW: status[0]++; break;
+                        case DONE: status[1]++; break;
                     }
                 }
                 if (epicIdsSubTask.size() == status[0])

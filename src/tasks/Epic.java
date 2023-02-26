@@ -10,12 +10,12 @@ public class Epic extends Task {
         idsSubTask = new ArrayList<>();
     }
 
-    public Epic() {
-        idsSubTask = new ArrayList<>();
-    }
-
     public List<Integer> getIdsSubTask() {
         return idsSubTask;
+    }
+
+    public void setIdsSubTask(List<Integer> idsSubTask) {
+        this.idsSubTask = idsSubTask;
     }
 
     @Override
@@ -24,7 +24,7 @@ public class Epic extends Task {
                 "title='" + this.getTitle() + '\'' +
                 ", description='" + this.getDescription() + '\'' +
                 ", status=" + this.getStatus() +
-                ", UIN=" + this.getID() +
+                ", id=" + this.getID() +
                 ", idsSubTask=" + this.getIdsSubTask() +
                 '}';
     }
