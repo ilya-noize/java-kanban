@@ -1,4 +1,4 @@
-import manager.Manager;
+import manager.InMemoryTaskManager;
 import tasks.Epic;
 import tasks.Status;
 import tasks.SubTask;
@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
-    private static final Manager manager = new Manager();
+    private static final InMemoryTaskManager IN_MEMORY_TASK_MANAGER = new InMemoryTaskManager();
 
     public static void main(String[] args) {
 
@@ -27,59 +27,59 @@ public class Main {
         String[] taskArray = tasks[0].split(";");
         for (String s : taskArray) {
             Task task = new Task(s,"");
-            manager.addTask(task);
+            IN_MEMORY_TASK_MANAGER.addTask(task);
         }
         checkTasks();
 
         //Тест связанных задач
         taskArray = tasks[1].split(";");
         Epic epic = new Epic(taskArray[0], "");
-        int epicID = manager.addEpic(epic);
+        int epicID = IN_MEMORY_TASK_MANAGER.addEpic(epic);
         List<Integer> subTaskIDs = new ArrayList<>();
         for (int i = 1; i < taskArray.length; i++) {
             SubTask subTask = new SubTask(taskArray[i], "", epicID);
-            subTaskIDs.add(manager.addSubTask(subTask));
+            subTaskIDs.add(IN_MEMORY_TASK_MANAGER.addSubTask(subTask));
         }
-        System.out.println(manager.getEpicById(epicID));
+        System.out.println(IN_MEMORY_TASK_MANAGER.getEpicById(epicID));
         System.out.println("Subtask is DONE step-by-step");
         for (Integer id : subTaskIDs) {
-            SubTask updateSubTask = manager.getSubTaskById(id);
+            SubTask updateSubTask = IN_MEMORY_TASK_MANAGER.getSubTaskById(id);
             updateSubTask.setStatus(Status.DONE);
-            manager.updateSubTask(updateSubTask);
+            IN_MEMORY_TASK_MANAGER.updateSubTask(updateSubTask);
             System.out.println("\t subTask id=" + id + " is " + Status.DONE);
         }
         System.out.println("Check`t");
-        System.out.println(manager.getSubTasksByEpic(epicID));
+        System.out.println(IN_MEMORY_TASK_MANAGER.getSubTasksByEpic(epicID));
         System.out.println("Set Epics Status");
-        manager.setEpicsStatus();
+        IN_MEMORY_TASK_MANAGER.setEpicsStatus();
         checkEpics();
 
 
         System.out.println("Delete All Tasks");
-        manager.deleteAllTasks();
+        IN_MEMORY_TASK_MANAGER.deleteAllTasks();
         checkTasks();
 
 
         System.out.println("Delete All SubTasks");
-        manager.deleteAllSubTasks();
+        IN_MEMORY_TASK_MANAGER.deleteAllSubTasks();
         checkSubTasks();
 
         System.out.println("Delete Epic By ID = " + epicID);
-        manager.deleteEpicByID(epicID);
+        IN_MEMORY_TASK_MANAGER.deleteEpicByID(epicID);
         checkEpics();
     }
 
     private static void checkTasks(){
         System.out.println("Checking Tasks");
-        System.out.println(manager.getAllTasks());
+        System.out.println(IN_MEMORY_TASK_MANAGER.getAllTasks());
 
     }
     private static void checkSubTasks(){
         System.out.println("Checking SubTasks");
-        System.out.println(manager.getAllSubTasks());
+        System.out.println(IN_MEMORY_TASK_MANAGER.getAllSubTasks());
     }
     private static void checkEpics(){
         System.out.println("Checking Epics");
-        System.out.println(manager.getAllEpics());
+        System.out.println(IN_MEMORY_TASK_MANAGER.getAllEpics());
     }
 }

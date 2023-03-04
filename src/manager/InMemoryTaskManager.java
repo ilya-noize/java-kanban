@@ -34,25 +34,29 @@ import java.util.Map;
  * @see #getSubTasksByEpic(int) Получение списка всех подзадач определённого эпика.
  * @see #setEpicsStatus() Проверить статус главной задачи
  */
-public class Manager {
+public class InMemoryTaskManager implements TaskManager {
 
-    private final Map<Integer, Task> taskRegister = new HashMap<>();
-    private final Map<Integer, SubTask> subTaskRegister = new HashMap<>();
-    private final Map<Integer, Epic> epicRegister = new HashMap<>();
+    private final Map<Integer, Task> TASK_REGISTER = new HashMap<>();
+    private final Map<Integer, SubTask> SUBTASK_REGISTER = new HashMap<>();
+    private final Map<Integer, Epic> EPIC_REGISTER = new HashMap<>();
 
     private int generateId = 1;
 
+    @Override
+    public List<Object> getHistory(){
+        List<Object> result = new ArrayList<>();
+        return result;
+    }
 
     /**
      * Получение списка всех задач
      * @return Список объектов TASK
      */
+    @Override
     public List<Task> getAllTasks() {
         List<Task> tasks = new ArrayList<>();
-        if (taskRegister.isEmpty()) return new ArrayList<>();
-        for (Task task : taskRegister.values()) {
-            tasks.add(task);
-        }
+        if (TASK_REGISTER.isEmpty()) return new ArrayList<>();
+        tasks.addAll(TASK_REGISTER.values());
         return tasks;
     }
 
@@ -60,12 +64,11 @@ public class Manager {
      * Получение списка всех главных задач
      * @return Список объектов EPIC
      */
+    @Override
     public List<Epic> getAllEpics() {
         List<Epic> epics = new ArrayList<>();
-        if (taskRegister.isEmpty()) return new ArrayList<>();
-        for (Epic epic : epicRegister.values()) {
-            epics.add(epic);
-        }
+        if (TASK_REGISTER.isEmpty()) return new ArrayList<>();
+        epics.addAll(EPIC_REGISTER.values());
         return epics;
     }
 
@@ -73,27 +76,28 @@ public class Manager {
      * Получение списка всех подзадач
      * @return Список объектов SUBTASK
      */
+    @Override
     public List<SubTask> getAllSubTasks() {
         List<SubTask> subTasks = new ArrayList<>();
-        if (taskRegister.isEmpty()) return new ArrayList<>();
-        for (SubTask subtask : subTaskRegister.values()) {
-            subTasks.add(subtask);
-        }
+        if (TASK_REGISTER.isEmpty()) return new ArrayList<>();
+        subTasks.addAll(SUBTASK_REGISTER.values());
         return subTasks;
     }
 
     /**
      * Удаление всех задач
      */
+    @Override
     public void deleteAllTasks() {
-        taskRegister.clear();
+        TASK_REGISTER.clear();
     }
 
     /**
      * Удаление всех главных задач.
      */
+    @Override
     public void deleteAllEpics() {
-        for (Epic epic : epicRegister.values()) {
+        for (Epic epic : EPIC_REGISTER.values()) {
             deleteEpicByID(epic.getID());
         }
     }
@@ -101,67 +105,75 @@ public class Manager {
     /**
      * Удаление всех подзадач.
      */
+    @Override
     public void deleteAllSubTasks() {
-        for (int i=0; subTaskRegister.isEmpty(); i++) {
-            deleteSubTaskByID(subTaskRegister.get(i).getID());
+        for (int i = 0; SUBTASK_REGISTER.isEmpty(); i++) {
+            deleteSubTaskByID(SUBTASK_REGISTER.get(i).getID());
         }
     }
 
     /**
      * Обновление задачи
      */
+    @Override
     public void updateTask(Task task) {
-        if (taskRegister.containsKey(task.getID()))
-            taskRegister.replace(task.getID(), task);
+        if (TASK_REGISTER.containsKey(task.getID()))
+            TASK_REGISTER.replace(task.getID(), task);
     }
 
     /**
      * Обновление главной задачи
      */
+    @Override
     public void updateEpic(Epic epic) {
-        if (epicRegister.containsKey(epic.getID()))
-            epicRegister.replace(epic.getID(), epic);
+        if (EPIC_REGISTER.containsKey(epic.getID()))
+            EPIC_REGISTER.replace(epic.getID(), epic);
     }
 
     /**
      * Обновление подзадачи
      */
+    @Override
     public void updateSubTask(SubTask subTask) {
-        if (subTaskRegister.containsKey(subTask.getID()))
-            subTaskRegister.replace(subTask.getID(), subTask);
+        if (SUBTASK_REGISTER.containsKey(subTask.getID()))
+            SUBTASK_REGISTER.replace(subTask.getID(), subTask);
     }
 
     /**
      * Получение задачи по идентификатору
      * @param id идентификатор
      */
+    @Override
     public Task getTaskById(int id) {
-        return taskRegister.get(id);
+        return TASK_REGISTER.get(id);
     }
 
     /**
      * Получение главной задачи по идентификатору
      * @param id идентификатор
      */
+    @Override
     public Epic getEpicById(int id) {
-        return epicRegister.get(id);
+        return EPIC_REGISTER.get(id);
     }
 
     /**
      * Получение подзадачи по идентификатору
      * @param id идентификатор
      */
+    @Override
     public SubTask getSubTaskById(int id) {
-        return subTaskRegister.get(id);
+        return SUBTASK_REGISTER.get(id);
     }
 
     /**
      * Создание задачи
      * @param task объект задача
      */
+    @Override
     public int addTask(Task task) {
         task.setID(generateId++);
-        taskRegister.put(task.getID(), task);
+        TASK_REGISTER.put(task.getID(), task);
         return task.getID();
     }
 
@@ -170,9 +182,10 @@ public class Manager {
      * @param epic объект Главная задача
      * @return Уникальный номер в Карте для связки с подзадачами
      */
+    @Override
     public int addEpic(Epic epic) {
         epic.setID(generateId++);
-        epicRegister.put(epic.getID(), epic);
+        EPIC_REGISTER.put(epic.getID(), epic);
         return epic.getID();
     }
 
@@ -189,13 +202,14 @@ public class Manager {
      * Иначе возвращаем ЛОЖЬ.
      * @param subTask Подзадача для главной задачи
      */
+    @Override
     public int addSubTask(SubTask subTask) {
         int referenceEpicId = subTask.getEpicId();
-        if (epicRegister.containsKey(referenceEpicId)) {
+        if (EPIC_REGISTER.containsKey(referenceEpicId)) {
             int subTaskId = generateId++;
             subTask.setID(subTaskId);
-            subTaskRegister.put(subTaskId, subTask);
-            epicRegister.get(referenceEpicId).getIdsSubTask().add(subTaskId);
+            SUBTASK_REGISTER.put(subTaskId, subTask);
+            EPIC_REGISTER.get(referenceEpicId).getIdsSubTask().add(subTaskId);
             return subTask.getID();
         }
         return (-1);
@@ -205,8 +219,9 @@ public class Manager {
      * Удаление задачи по идентификатору
      * @param id идентификатор
      */
+    @Override
     public void deleteTaskByID(int id) {
-            taskRegister.remove(id);
+            TASK_REGISTER.remove(id);
     }
 
     /**
@@ -219,10 +234,11 @@ public class Manager {
      * иначе вернуть ЛОЖЬ.
      * @param id идентификатор
      */
+    @Override
     public void deleteEpicByID(int id) {
-        if (epicRegister.containsKey(id)) {
-            if (epicRegister.get(id).getIdsSubTask().size() != 0) {
-                epicRegister.remove(id);
+        if (EPIC_REGISTER.containsKey(id)) {
+            if (EPIC_REGISTER.get(id).getIdsSubTask().size() != 0) {
+                EPIC_REGISTER.remove(id);
             }
         }
     }
@@ -233,17 +249,18 @@ public class Manager {
      * и последующим удалением подзадачи из Карты.</p>
      * @param id идентификатор
      */
+    @Override
     public void deleteSubTaskByID(int id) {
-        if (subTaskRegister.containsKey(id)
-                && epicRegister.get(subTaskRegister.get(id).getEpicId()).getIdsSubTask().contains(id)) {
-            List<Integer> idsSubTask = epicRegister.get(subTaskRegister.get(id).getEpicId()).getIdsSubTask();
+        if (SUBTASK_REGISTER.containsKey(id)
+                && EPIC_REGISTER.get(SUBTASK_REGISTER.get(id).getEpicId()).getIdsSubTask().contains(id)) {
+            List<Integer> idsSubTask = EPIC_REGISTER.get(SUBTASK_REGISTER.get(id).getEpicId()).getIdsSubTask();
             for (int i = 0; i < idsSubTask.size(); i++) {
                 if (idsSubTask.get(i) == id){
                     idsSubTask.remove(i);
                 }
             }
-            epicRegister.get(subTaskRegister.get(id).getEpicId()).setIdsSubTask(idsSubTask);
-            subTaskRegister.remove(id);
+            EPIC_REGISTER.get(SUBTASK_REGISTER.get(id).getEpicId()).setIdsSubTask(idsSubTask);
+            SUBTASK_REGISTER.remove(id);
         }
     }
 
@@ -252,9 +269,10 @@ public class Manager {
      * @param epicID идентификатор главной задачи
      * @return Список связанных с главной задачей мелких подзадач.
      */
+    @Override
     public List<SubTask> getSubTasksByEpic(int epicID) {
         List<SubTask> subTasksByEpic = new ArrayList<>();
-        if (epicRegister.containsKey(epicID)) {
+        if (EPIC_REGISTER.containsKey(epicID)) {
             for (Integer subTaskId : getEpicById(epicID).getIdsSubTask()) {
                 subTasksByEpic.add(getSubTaskById(subTaskId));
             }
@@ -276,15 +294,16 @@ public class Manager {
      *      <p>ЕСЛИ (Все подзадачи завершены) ТО статус-DONE</p>
      *      Во всех остальных случаях статус-IN_PROGRESS;
      */
+    @Override
     public void setEpicsStatus() {
-        for (Epic epic : epicRegister.values()) {
+        for (Epic epic : EPIC_REGISTER.values()) {
             List<Integer> epicIdsSubTask = epic.getIdsSubTask();
             if (epicIdsSubTask.isEmpty()){
                 epic.setStatus(Status.NEW);
             } else {
                 int[] status = new int[]{0, 0};
                 for (int subTaskId : epicIdsSubTask) {
-                    switch (subTaskRegister.get(subTaskId).getStatus()){
+                    switch (SUBTASK_REGISTER.get(subTaskId).getStatus()){
                         case NEW: status[0]++; break;
                         case DONE: status[1]++; break;
                     }
