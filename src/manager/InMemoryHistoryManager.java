@@ -7,8 +7,8 @@ import java.util.List;
 
 public class InMemoryHistoryManager implements HistoryManager {
 
-    private static final List<Task> TASK_HISTORY = new ArrayList<>();
-    private final int LIMIT_RECORDS = 10;
+    private final List<Task> TASK_HISTORY = new ArrayList<>();
+    private static final int LIMIT_RECORDS = 10;
 
     /**
      * Добавление задачи в список просмотренных задач
