@@ -66,6 +66,20 @@ public class Task {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Task task = (Task) o;
+
+        return title.equals(task.title) && Objects.equals(description, task.description);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(title, description);
+    }
+
+    @Override
     public String toString() {
         return "Task{" +
                 "title='" + this.getTitle() + '\'' +
@@ -74,18 +88,6 @@ public class Task {
                 ", id=" + this.getID() +
                 "}";
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Task task = (Task) o;
-        return title.equals(task.title) && Objects.equals(description, task.description);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(title, description);
-    }
 }
+
 
