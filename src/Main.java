@@ -64,7 +64,7 @@ public class Main {
         System.out.println("Testing TASK_MANAGER.getSubTasksByEpic - - - - - - ");
         System.out.println(TASK_MANAGER.getSubTasksByEpic(epicID));
         System.out.println("Testing TASK_MANAGER.setEpicStatus - - - - - - - - ");
-        TASK_MANAGER.setEpicStatus(epicID);
+        TASK_MANAGER.updateEpicStatus(epicID);
         checkAllEpics();
 
         getHistoryOfTasks();

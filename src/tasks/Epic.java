@@ -4,20 +4,21 @@ import java.util.List;
 import java.util.Objects;
 
 public class Epic extends Task {
-    protected List<Integer> idsSubTask;
+    protected final List<Integer> subtaskID;
 
     public Epic(String title, String description) {
         super(title, description);
-        idsSubTask = new ArrayList<>();
+        subtaskID = new ArrayList<>();
     }
 
-    public List<Integer> getIdsSubTask() {
-        return idsSubTask;
+    public List<Integer> getSubtaskID() {
+        return subtaskID;
     }
 
-    public void setIdsSubTask(List<Integer> idsSubTask) {
-        this.idsSubTask = idsSubTask;
+    public void removeSubtaskID(Integer id) {
+        this.subtaskID.remove(id);
     }
+
 
     @Override
     public boolean equals(Object o) {
@@ -26,12 +27,12 @@ public class Epic extends Task {
         if (!super.equals(o)) return false;
         Epic epic = (Epic) o;
 
-        return getIdsSubTask().equals(epic.getIdsSubTask());
+        return getSubtaskID().equals(epic.getSubtaskID());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), getIdsSubTask());
+        return Objects.hash(super.hashCode(), getSubtaskID());
     }
 
     @Override
@@ -41,7 +42,7 @@ public class Epic extends Task {
                 ", description='" + this.getDescription() + '\'' +
                 ", status=" + this.getStatus() +
                 ", id=" + this.getID() +
-                ", idsSubTask=" + this.getIdsSubTask() +
+                ", idsSubTask=" + this.getSubtaskID() +
                 '}';
     }
 }

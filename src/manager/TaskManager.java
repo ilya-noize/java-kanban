@@ -48,5 +48,5 @@ public interface TaskManager {
 
   List<SubTask> getSubTasksByEpic(int id); // Получение списка всех подзадач определённого эпика.
 
-  void setEpicStatus(int id); // Проверить статус главной задачи
+  void updateEpicStatus(int id); // Проверить статус главной задачи
 }

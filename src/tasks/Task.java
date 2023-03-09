@@ -28,14 +28,12 @@ public class Task {
     public Task(String title, String description) {
         this.title = title;
         this.description = description;
-        this.id = hashCode();
         this.status = Status.NEW;
     }
 
     public Task() {
         this.title = "";
         this.description = "";
-        this.id = hashCode();
         this.status = Status.NEW;
     }
 
@@ -44,8 +42,7 @@ public class Task {
     }
 
     public void setTitle(String title) {
-        if (!title.isEmpty())
-            this.title = title;
+        this.title = title;
     }
 
     public String getDescription() {
@@ -53,8 +50,7 @@ public class Task {
     }
 
     public void setDescription(String description) {
-        if (description.isEmpty()) this.description = "";
-        else this.description = description;
+        this.description = description;
     }
 
     public Status getStatus() {
