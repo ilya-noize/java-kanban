@@ -20,19 +20,19 @@ import java.util.Map;
  * @see #deleteAllEpics() Удаление всех главных задач
  * @see #deleteAllSubTasks() Удаление всех подзадач
  * @see #getTask(int)  Получение задачи по идентификатору;
- * @see #getEpic(int)  Получение главной задачи по идентификатору;
+ * @see #getEpic(int)  Получение Большой задачи по идентификатору;
  * @see #getSubTask(int)  Получение подзадачи по идентификатору;
  * @see #addTask(Task) Создание задачи
- * @see #addEpic(Epic) Создание главной задачи
+ * @see #addEpic(Epic) Создание Большой задачи
  * @see #addSubTask(SubTask) Создание подзадачи
  * @see #updateTask(Task) Обновление задачи
- * @see #updateEpic(Epic) Обновление главной задачи
+ * @see #updateEpic(Epic) Обновление Большой задачи
  * @see #updateSubTask(SubTask) Обновление подзадачи
  * @see #deleteTask(int) Удаление задачи по идентификатору
- * @see #deleteEpic(int) Удаление главной задачи по идентификатору
+ * @see #deleteEpic(int) Удаление Большой задачи по идентификатору
  * @see #deleteSubTask(int)  Удаление подзадачи по идентификатору
  * @see #getSubTasksByEpic(int) Получение списка всех подзадач определённого эпика.
- * @see #updateEpicStatus(int) Проверить статус главной задачи
+ * @see #updateEpicStatus(int) Проверить статус Большой задачи
  */
 public class InMemoryTaskManager implements TaskManager {
 
@@ -106,7 +106,7 @@ public class InMemoryTaskManager implements TaskManager {
      * Удаление всех главных задач.
      */
     @Override
-    public void deleteAllEpics() { // todo subTasks тоже нужно почистить.
+    public void deleteAllEpics() {
         for (Epic epic : epics.values()) {
             deleteEpic(epic.getID());
         }
@@ -133,7 +133,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     /**
-     * Обновление главной задачи
+     * Обновление Большой задачи
      */
     @Override
     public void updateEpic(Epic epic) {
@@ -167,7 +167,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     /**
-     * Получение главной задачи по идентификатору
+     * Получение Большой задачи по идентификатору
      *
      * @param id идентификатор
      */
@@ -205,8 +205,8 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     /**
-     * Создание главной задачи
-     * @param epic объект Главная задача
+     * Создание Большой задачи
+     * @param epic объект Большая задача
      * @return Уникальный номер в Карте для связки с подзадачами
      */
     @Override
@@ -219,16 +219,16 @@ public class InMemoryTaskManager implements TaskManager {
 
     /**
      * <p>Запись новой подзадачи.</p>
-     * Если главная задача с УИН, с которой связана текущая подзадача, существует, то:
+     * Если Большая задача с ID, с которой связана текущая подзадача, существует, то:
      * <ul>
-     *     <li>Генерим новый УИН</li>
-     *     <li>Редактируем поле УИН объекта подзадачи</li>
+     *     <li>Генерим новый ID</li>
+     *     <li>Редактируем поле ID объекта подзадачи</li>
      *     <li>Сохраняем подзадачу в Карту</li>
-     *     <li>Обращаемся к главной задаче в Карте для обновления её связей с подзадачей.</li>
+     *     <li>Обращаемся к Большой задаче в Карте для обновления её связей с подзадачей.</li>
      *     <li>Возвращаем ИСТИНУ</li>
      * </ul>
      * Иначе возвращаем ЛОЖЬ.
-     * @param subTask Подзадача для главной задачи
+     * @param subTask Подзадача для Большой задачи
      */
     @Override
     public int addSubTask(SubTask subTask) {
@@ -256,12 +256,12 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     /**
-     * <p>Удаление главной задачи по УИН</p>
+     * <p>Удаление Большой задачи по ID</p>
      * <b>ЕСЛИ:</b>
      * <ul>
-     *     <li>Главная задача существует в Карте</li>
+     *     <li>Большая задача существует в Карте</li>
      *     <li>Список связанных с ней подзадач пуст</li>
-     * </ul> то удаление главной задачи из Карты (вернуть ИСТИНА),
+     * </ul> то удаление Большой задачи из Карты (вернуть ИСТИНА),
      * иначе вернуть ЛОЖЬ.
      *
      * @param epicID идентификатор
@@ -270,17 +270,16 @@ public class InMemoryTaskManager implements TaskManager {
     public void deleteEpic(int epicID) {
         if (epics.containsKey(epicID)) {
             List<Integer> subtaskIDs = epics.get(epicID).getSubtaskID();
-            while (!subtaskIDs.isEmpty()) {
-                deleteSubTask(subtaskIDs.get(0));
+            for (int subtaskID: subtaskIDs) {
+                subtasks.get(subtaskID).setEpicId(0);
             }
-//            }
             epics.remove(epicID);
         }
     }
 
     /**
-     * Удаление подзадачи по УИН
-     * <p>Если подзадача с таким УИН существует, то обращаемся к её главной задаче для удаления взаимосвязи
+     * Удаление подзадачи по ID
+     * <p>Если подзадача с таким ID существует, то обращаемся к её Большой задаче для удаления взаимосвязи
      * и последующим удалением подзадачи из Карты.</p>
      *
      * @param id идентификатор
@@ -296,9 +295,9 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     /**
-     * <p>Получение всех задач определённой главной задачи</p>
-     * @param epicID идентификатор главной задачи
-     * @return Список связанных с главной задачей мелких подзадач.
+     * <p>Получение всех задач определённой Большой задачи</p>
+     * @param epicID идентификатор Большой задачи
+     * @return Список связанных с Большой задачей мелких подзадач.
      */
     @Override
     public List<SubTask> getSubTasksByEpic(int epicID) {
@@ -315,8 +314,8 @@ public class InMemoryTaskManager implements TaskManager {
     /**
      * Проверить статус всех главных задач
      * <ul>
-     *     <li>Получаем доступ к объекту главная задача из Карты</li>
-     *     <li>Получаем список УИН связанных подзадач</li>
+     *     <li>Получаем доступ к объекту Большая задача из Карты</li>
+     *     <li>Получаем список ID связанных подзадач</li>
      *     <li>Объявляем счётчик состояний</li>
      *     <li>Ищем все связанные задачи для получения доступа к статусу задачи</li>
      *     <li>Подсчёт всех состояний<sup>*</sup></li>
@@ -328,27 +327,29 @@ public class InMemoryTaskManager implements TaskManager {
      */
     @Override
     public void updateEpicStatus(int epicID) {
-        Epic epic = epics.get(epicID);
-        List<Integer> subtaskID = epic.getSubtaskID();
-        if (subtaskID.isEmpty()) {
-            epic.setStatus(Status.NEW);
-        } else {
-            int counterNew = 0;
-            int counterDone = 0;
-            for (int id : subtaskID) {
-                Status markStatus = subtasks.get(id).getStatus();
-                if (markStatus.equals(Status.NEW)) {
-                    counterNew++;
-                }
-                if (markStatus.equals(Status.DONE)) {
-                    counterDone++;
-                }
-            }
-            if (subtaskID.size() == counterNew) {
+        if (epics.containsKey(epicID)) {
+            Epic epic = epics.get(epicID);
+            List<Integer> subtaskID = epic.getSubtaskID();
+            if (subtaskID.isEmpty()) {
                 epic.setStatus(Status.NEW);
-            } else if (subtaskID.size() == counterDone) {
-                epic.setStatus(Status.DONE);
-            } else epic.setStatus(Status.IN_PROGRESS);
+            } else {
+                int counterNew = 0;
+                int counterDone = 0;
+                for (int id : subtaskID) {
+                    Status markStatus = subtasks.get(id).getStatus();
+                    if (markStatus.equals(Status.NEW)) {
+                        counterNew++;
+                    }
+                    if (markStatus.equals(Status.DONE)) {
+                        counterDone++;
+                    }
+                }
+                if (subtaskID.size() == counterNew) {
+                    epic.setStatus(Status.NEW);
+                } else if (subtaskID.size() == counterDone) {
+                    epic.setStatus(Status.DONE);
+                } else epic.setStatus(Status.IN_PROGRESS);
+            }
         }
     }
 }
