@@ -46,7 +46,7 @@ public class SubTask extends Task{
                 "title='" + this.getTitle() + '\'' +
                 ", description='" + this.getDescription() + '\'' +
                 ", status=" + this.getStatus() +
-                ", id=" + this.getID() +
+                ", id=" + this.getId() +
                 ", epicID=" + this.getEpicId() +
                 '}';
     }

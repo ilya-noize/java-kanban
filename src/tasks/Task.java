@@ -17,11 +17,11 @@ public class Task {
     protected String description;
     protected Status status;
 
-    public void setID(int id) {
+    public void setId(int id) {
         this.id = id;
     }
 
-    public int getID() {
+    public int getId() {
         return id;
     }
 
@@ -81,7 +81,7 @@ public class Task {
                 "title='" + this.getTitle() + '\'' +
                 ", description='" + this.getDescription() + '\'' +
                 ", status=" + this.getStatus() +
-                ", id=" + this.getID() +
+                ", id=" + this.getId() +
                 "}";
     }
 }
