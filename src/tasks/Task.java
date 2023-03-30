@@ -17,12 +17,11 @@ public class Task {
     protected String description;
     protected Status status;
 
-    public void setId(int id) {
+    public Task(int id, String title, String description, Status status) {
         this.id = id;
-    }
-
-    public int getId() {
-        return id;
+        this.title = title;
+        this.description = description;
+        this.status = status;
     }
 
     public Task(String title, String description) {
@@ -35,6 +34,14 @@ public class Task {
         this.title = "";
         this.description = "";
         this.status = Status.NEW;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getTitle() {
@@ -77,12 +84,9 @@ public class Task {
 
     @Override
     public String toString() {
-        return "Task{" +
-                "title='" + this.getTitle() + '\'' +
-                ", description='" + this.getDescription() + '\'' +
-                ", status=" + this.getStatus() +
-                ", id=" + this.getId() +
-                "}";
+
+        return this.getId() + "," + TypeTask.TASK + ",\'" + this.getTitle() + "\',"
+                + this.getStatus() + ",\'" + this.getDescription() + "\',\n";
     }
 }
 

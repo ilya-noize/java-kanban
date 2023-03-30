@@ -1,3 +1,4 @@
+import manager.ManagerException;
 import manager.Managers;
 import manager.TaskManager;
 import tasks.Epic;
@@ -7,21 +8,28 @@ import tasks.Task;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Main {
-    private static final TaskManager taskManager = Managers.getDefaultTask();
+public class Main{
+    //private static final TaskManager taskManager = Managers.getDefaultTask();
+    private static final TaskManager taskManager = Managers.getFileBackedTasks();
 
-    public static void main(String[] args) {
-        testingByTechTask();
+    public static void main(String[] args){
+        try{
+            testingByTechTask();
+        } catch (ManagerException e){
+            System.out.println(e.getMessage());
+        }
     }
 
     /**
-     * Тестирование работы программы
+     * <h1>Тестирование работы программы</h1>
      * После написания менеджера истории проверьте его работу:
-     * 1) создайте две задачи, эпик с тремя подзадачами и эпик без подзадач;
-     * 2) запросите созданные задачи несколько раз в разном порядке;
-     * 3) после каждого запроса выведите историю и убедитесь, что в ней нет повторов;
-     * 4) удалите задачу, которая есть в истории, и проверьте, что при печати она не будет выводиться;
-     * 5) удалите эпик с тремя подзадачами и убедитесь, что из истории удалился как сам эпик, так и все его подзадачи.
+     * <ul>
+     *     <li> создайте две задачи, эпик с тремя подзадачами и эпик без подзадач;</li>
+     *     <li> запросите созданные задачи несколько раз в разном порядке;</li>
+     *     <li> после каждого запроса выведите историю и убедитесь, что в ней нет повторов;</li>
+     *     <li> удалите задачу, которая есть в истории, и проверьте, что при печати она не будет выводиться;</li>
+     *     <li> удалите эпик с тремя подзадачами и убедитесь, что из истории удалился как сам эпик, так и все его подзадачи.</li>
+     * </ul>
      */
     private static void testingByTechTask() {
         List<Integer> taskId = new ArrayList<>();
@@ -49,6 +57,7 @@ public class Main {
         taskManager.getSubTask(subtaskId.get(1));   // STask2
         taskManager.getTask(taskId.get(0));         // Task1
 
+
         taskManager.getSubTask(subtaskId.get(0));   // STask1
         getHistoryOfTasks();
         taskManager.getTask(taskId.get(0));         // Task1   (double)
@@ -72,7 +81,7 @@ public class Main {
         taskManager.deleteTask(taskId.get(0));      // del Task1
         getHistoryOfTasks();
 
-        taskManager.deleteEpic(epicId.get(0));      // del Epic1 (+STask[0,1,2])
+        taskManager.deleteEpic(epicId.get(0));      // del Epic1 (+SubTask[0,1,2])
         getHistoryOfTasks();
 
         destroyData(); // end

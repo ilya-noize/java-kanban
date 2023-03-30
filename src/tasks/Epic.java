@@ -4,19 +4,24 @@ import java.util.List;
 import java.util.Objects;
 
 public class Epic extends Task {
-    protected final List<Integer> subtaskId;
+    private final List<Integer> subTaskId;
+
+    public Epic(int id, String title, String description, Status status) {
+        super(id, title, description, status);
+        this.subTaskId = new ArrayList<>();
+    }
 
     public Epic(String title, String description) {
         super(title, description);
-        subtaskId = new ArrayList<>();
+        this.subTaskId = new ArrayList<>();
     }
 
-    public List<Integer> getSubtaskId() {
-        return subtaskId;
+    public List<Integer> getSubTaskId() {
+        return subTaskId;
     }
 
     public void removeSubtaskId(Integer id) {
-        this.subtaskId.remove(id);
+        this.subTaskId.remove(id);
     }
 
 
@@ -27,22 +32,18 @@ public class Epic extends Task {
         if (!super.equals(o)) return false;
         Epic epic = (Epic) o;
 
-        return getSubtaskId().equals(epic.getSubtaskId());
+        return getSubTaskId().equals(epic.getSubTaskId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), getSubtaskId());
+        return Objects.hash(super.hashCode(), getSubTaskId());
     }
 
     @Override
     public String toString() {
-        return "Epic{" +
-                "title='" + this.getTitle() + '\'' +
-                ", description='" + this.getDescription() + '\'' +
-                ", status=" + this.getStatus() +
-                ", id=" + this.getId() +
-                ", idsSubTask=" + this.getSubtaskId() +
-                '}';
+
+        return this.getId() + "," + TypeTask.EPIC + ",\'" + this.getTitle() + "\',"
+                + this.getStatus() + ",\'" + this.getDescription() + "\',\n";
     }
 }

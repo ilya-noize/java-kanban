@@ -37,6 +37,7 @@ import java.util.Map;
 public class InMemoryTaskManager implements TaskManager {
 
     private int generateId = 1;
+
     private final Map<Integer, Task> tasks = new HashMap<>();
     private final Map<Integer, SubTask> subtasks = new HashMap<>();
     private final Map<Integer, Epic> epics = new HashMap<>();
@@ -239,7 +240,7 @@ public class InMemoryTaskManager implements TaskManager {
             int subtaskId = generateId++;
             subTask.setId(subtaskId);
             subtasks.put(subtaskId, subTask);
-            epics.get(epicId).getSubtaskId().add(subtaskId);
+            epics.get(epicId).getSubTaskId().add(subtaskId);
             updateEpicStatus(epicId);
 
             return subTask.getId();
@@ -272,7 +273,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteEpic(int epicId) {
         if (epics.containsKey(epicId)) {
-            List<Integer> subtaskIds = epics.get(epicId).getSubtaskId();
+            List<Integer> subtaskIds = epics.get(epicId).getSubTaskId();
             if (!subtaskIds.isEmpty()) {
                 for (int subtaskId: subtaskIds) {
                     subtasks.remove(subtaskId);
@@ -294,7 +295,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteSubTask(int id) {
         int epicId = subtasks.get(id).getEpicId();
-        if (epics.get(epicId).getSubtaskId().contains(id)) {
+        if (epics.get(epicId).getSubTaskId().contains(id)) {
             epics.get(epicId).removeSubtaskId(id);
             updateEpicStatus(epicId);
             subtasks.remove(id);
@@ -311,7 +312,7 @@ public class InMemoryTaskManager implements TaskManager {
     public List<SubTask> getSubTasksByEpic(int epicId) {
         List<SubTask> subTasksByEpic = new ArrayList<>();
         if (epics.containsKey(epicId)) {
-            for (Integer subTaskId : getEpic(epicId).getSubtaskId()) {
+            for (Integer subTaskId : getEpic(epicId).getSubTaskId()) {
                 subTasksByEpic.add(getSubTask(subTaskId));
             }
         }
@@ -337,7 +338,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void updateEpicStatus(int epicId) {
         if (epics.containsKey(epicId)) {
             Epic epic = epics.get(epicId);
-            List<Integer> subTaskId = epic.getSubtaskId();
+            List<Integer> subTaskId = epic.getSubTaskId();
             if (subTaskId.isEmpty()) {
                 epic.setStatus(Status.NEW);
             } else {

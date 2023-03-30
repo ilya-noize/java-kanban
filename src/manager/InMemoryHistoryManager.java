@@ -2,11 +2,7 @@ package manager;
 
 import tasks.Task;
 
-import java.util.Objects;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -60,9 +56,9 @@ public class InMemoryHistoryManager implements HistoryManager {
             Node nodeNext = node.next;
             nodeNext.prev = node.prev;
 
+            nodes.remove(node.task.getId());
             remove(node.task.getId());
 
-            nodes.remove(node.task.getId());
         }
     }
 
