@@ -1,10 +1,15 @@
 package manager;
 
 import tasks.Task;
-import java.util.*;
+
+import java.util.Objects;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 
 /**
- *
  * Ключом будет id задачи, просмотр которой требуется удалить
  * Значение — место просмотра этой задачи в списке (узел связного списка).
  */
@@ -14,6 +19,11 @@ public class InMemoryHistoryManager implements HistoryManager {
     private Node begin;
     private Node end;
 
+    /**
+     * Элемент реализации двусвязного списка задач.
+     * linkLast будет добавлять задачу в конец этого списка.
+     * @param task задача
+     */
     public void linkLast(Task task){
         if(begin == null){
             begin = new Node(null, task, null);
@@ -26,16 +36,21 @@ public class InMemoryHistoryManager implements HistoryManager {
         nodes.put(task.getId(), end);
     }
 
+    /**
+     * Удаление узла двусвязного списка.
+     * При повторном просмотре задачи или принудительном удалении.
+     * @param node узел двусвязного списка
+     */
     private void removeNode(Node node){
-        if(node == begin){
+        if(node.equals(begin)){
             begin = node.next;
             nodes.remove(node.task.getId());
             begin.prev = null;
-        } else if (node == end) {
+        } else if (node.equals(end)) {
             end = node.prev;
             nodes.remove(node.task.getId());
             end.next = null;
-        } else if (begin == end){
+        } else if (begin.equals(end)){
             begin = end = null;
             nodes.clear();
         } else {
@@ -52,7 +67,8 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     /**
-     * Получение списка истории просмотров задач
+     * Элемент реализации двусвязного списка задач.
+     * Собирает все задачи из него в обычный ArrayList
      *
      * @return Список объектов TASK
      */
@@ -69,32 +85,37 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     /**
-     * Добавление задачи в список просмотренных задач
+     * Добавление задачи в список просмотренных задач для getTask(int id), getSubTask(int id), getEpic(int id)
      *
      * @param task задача
      */
     @Override
     public void add(Task task) {
         int taskId = task.getId();
-        if(nodes.containsKey(taskId)){
-            removeNode(nodes.get(taskId));
-            nodes.remove(taskId);
-        }
+        remove(taskId);
         linkLast(task);
     }
 
-
+    /**
+     * Удаление задачи из истории:
+     * если дублируется при добавлении в историю (add);
+     * если задача совсем удаляется (deleteTask/SubTask/Epic).
+     *
+     * @param id номер задачи
+     */
     @Override
     public void remove(int id){
         if(nodes.containsKey(id)) {
             removeNode(nodes.get(id));
+            nodes.remove(id);
         }
     }
 
-    private class Node {
+    private static class Node {
         Node prev;
         Task task;
         Node next;
+
         Node(Node prev, Task task, Node next) {
             this.prev = prev;
             this.task = task;
