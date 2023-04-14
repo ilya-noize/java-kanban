@@ -42,7 +42,7 @@ public class InMemoryTaskManager implements TaskManager {
     private final Map<Integer, SubTask> subtasks = new HashMap<>();
     private final Map<Integer, Epic> epics = new HashMap<>();
 
-    private final HistoryManager historyManager = Managers.getDefaultHistory();
+    protected final HistoryManager historyManager = Managers.getDefaultHistory();
 
 
     /**
@@ -257,6 +257,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteTask(int id) {
         tasks.remove(id);
+        historyManager.remove(id);
     }
 
     /**
@@ -268,20 +269,20 @@ public class InMemoryTaskManager implements TaskManager {
      * </ul> то удаление Большой задачи из Карты (вернуть ИСТИНА),
      * иначе вернуть ЛОЖЬ.
      *
-     * @param epicId идентификатор
+     * @param id идентификатор
      */
     @Override
-    public void deleteEpic(int epicId) {
-        if (epics.containsKey(epicId)) {
-            List<Integer> subtaskIds = epics.get(epicId).getSubTaskId();
+    public void deleteEpic(int id) {
+        if (epics.containsKey(id)) {
+            List<Integer> subtaskIds = epics.get(id).getSubTaskId();
             if (!subtaskIds.isEmpty()) {
                 for (int subtaskId: subtaskIds) {
                     subtasks.remove(subtaskId);
                     historyManager.remove(subtaskId);
                 }
             }
-            epics.remove(epicId);
-            historyManager.remove(epicId);
+            epics.remove(id);
+            historyManager.remove(id);
         }
     }
 

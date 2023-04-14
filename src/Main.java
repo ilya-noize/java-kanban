@@ -84,7 +84,11 @@ public class Main{
         taskManager.deleteEpic(epicId.get(0));      // del Epic1 (+SubTask[0,1,2])
         getHistoryOfTasks();
 
-        destroyData(); // end
+        //destroyData
+        taskManager.deleteTask(taskId.get(1));
+        getHistoryOfTasks();
+        //taskManager.deleteTask(epicId.get(1));
+        //getHistoryOfTasks();
     }
 
     private static void getHistoryOfTasks() {
@@ -94,22 +98,24 @@ public class Main{
         }
         System.out.println("end<-------------------------- taskManager.getHistory");
     }
-
+/*
     private static void checkTasks() {
         System.out.println("checking taskManager.getAllTasks - - - - - - - - - - - - - - -");
         System.out.println(taskManager.getAllTasks());
     }
-
+/*
     private static void checkAllSubTasks() {
         System.out.println("checking taskManager.getAllSubTasks  - - - - - - - - - - - - -");
         System.out.println(taskManager.getAllSubTasks());
     }
-
+/*
     private static void checkAllEpics() {
         System.out.println("checking taskManager.getAllEpics - - - - - - - - - - - - - - -");
         System.out.println(taskManager.getAllEpics());
     }
 
+    /*
+     *
     private static void destroyData() {
         System.out.println("checking taskManager.deleteAllTasks - - - - - - - - - - - - - -");
         taskManager.deleteAllTasks();
@@ -121,4 +127,5 @@ public class Main{
         taskManager.deleteAllEpics();
         checkAllEpics();
     }
+    */
 }
