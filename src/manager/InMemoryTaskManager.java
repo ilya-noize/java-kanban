@@ -52,7 +52,9 @@ public class InMemoryTaskManager implements TaskManager {
      */
     @Override
     public List<Task> getHistory() {
-        return historyManager.getHistory();
+        List<Task> history = historyManager.getHistory();
+        if(history != null) return history;
+        return new ArrayList<>();
     }
 
     /**
@@ -256,8 +258,8 @@ public class InMemoryTaskManager implements TaskManager {
      */
     @Override
     public void deleteTask(int id) {
-        tasks.remove(id);
         historyManager.remove(id);
+        tasks.remove(id);
     }
 
     /**

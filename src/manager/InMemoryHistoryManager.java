@@ -1,5 +1,6 @@
 package manager;
 
+import exception.ManagerException;
 import tasks.Task;
 
 import java.util.*;
@@ -38,10 +39,11 @@ public class InMemoryHistoryManager implements HistoryManager {
      * @param node узел двусвязного списка
      */
     private void removeNode(Node node){
+        try{
         if(node.equals(begin)){
             begin = node.next;
-            nodes.remove(node.task.getId());
             begin.prev = null;
+            nodes.remove(node.task.getId());
         } else if (node.equals(end)) {
             end = node.prev;
             nodes.remove(node.task.getId());
@@ -58,7 +60,9 @@ public class InMemoryHistoryManager implements HistoryManager {
 
             nodes.remove(node.task.getId());
             remove(node.task.getId());
-
+        }
+        }catch (NullPointerException e){
+            throw new ManagerException("История просмотра пуста.");
         }
     }
 
@@ -71,7 +75,10 @@ public class InMemoryHistoryManager implements HistoryManager {
     @Override
     public List<Task> getHistory() {
         List<Task> history = new ArrayList<>();
-        Node node = begin;
+        Node node = null;
+        if (begin != null) {
+            node = begin;
+        }
         while (node != null) {
             history.add(node.task);
             node = node.next;
