@@ -39,7 +39,9 @@ public class InMemoryHistoryManager implements HistoryManager {
      * @param node узел двусвязного списка
      */
     private void removeNode(Node node){
-        try{
+        if (begin.equals(null)) {
+            throw new ManagerException("История просмотра пуста.");
+        }
         if(node.equals(begin)){
             begin = node.next;
             begin.prev = null;
@@ -60,9 +62,6 @@ public class InMemoryHistoryManager implements HistoryManager {
 
             nodes.remove(node.task.getId());
             remove(node.task.getId());
-        }
-        }catch (NullPointerException e){
-            throw new ManagerException("История просмотра пуста.");
         }
     }
 

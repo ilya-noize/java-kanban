@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static tasks.Status.*;
+
 /**
  * Хранение задач всех типов.
  *
@@ -38,9 +40,9 @@ public class InMemoryTaskManager implements TaskManager {
 
     private int generateId = 1;
 
-    private final Map<Integer, Task> tasks = new HashMap<>();
-    private final Map<Integer, SubTask> subtasks = new HashMap<>();
-    private final Map<Integer, Epic> epics = new HashMap<>();
+    protected final Map<Integer, Task> tasks = new HashMap<>();
+    protected final Map<Integer, SubTask> subtasks = new HashMap<>();
+    protected final Map<Integer, Epic> epics = new HashMap<>();
 
     protected final HistoryManager historyManager = Managers.getDefaultHistory();
 
@@ -53,8 +55,10 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public List<Task> getHistory() {
         List<Task> history = historyManager.getHistory();
-        if(history != null) return history;
-        return new ArrayList<>();
+        if(history.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return history;
     }
 
     /**
@@ -67,7 +71,6 @@ public class InMemoryTaskManager implements TaskManager {
         if (tasks.isEmpty()) {
             return new ArrayList<>();
         }
-
         return new ArrayList<>(tasks.values());
     }
 
@@ -80,7 +83,6 @@ public class InMemoryTaskManager implements TaskManager {
         if (tasks.isEmpty()) {
             return new ArrayList<>();
         }
-
         return new ArrayList<>(epics.values());
     }
 
@@ -93,7 +95,6 @@ public class InMemoryTaskManager implements TaskManager {
         if (tasks.isEmpty()) {
             return new ArrayList<>();
         }
-
         return new ArrayList<>(subtasks.values());
     }
 
@@ -343,24 +344,24 @@ public class InMemoryTaskManager implements TaskManager {
             Epic epic = epics.get(epicId);
             List<Integer> subTaskId = epic.getSubTaskId();
             if (subTaskId.isEmpty()) {
-                epic.setStatus(Status.NEW);
+                epic.setStatus(NEW);
             } else {
                 int counterNew = 0;
                 int counterDone = 0;
                 for (int id : subTaskId) {
                     Status markStatus = subtasks.get(id).getStatus();
-                    if (markStatus.equals(Status.NEW)) {
+                    if (markStatus.equals(NEW)) {
                         counterNew++;
                     }
-                    if (markStatus.equals(Status.DONE)) {
+                    if (markStatus.equals(DONE)) {
                         counterDone++;
                     }
                 }
                 if (subTaskId.size() == counterNew) {
-                    epic.setStatus(Status.NEW);
+                    epic.setStatus(NEW);
                 } else if (subTaskId.size() == counterDone) {
-                    epic.setStatus(Status.DONE);
-                } else epic.setStatus(Status.IN_PROGRESS);
+                    epic.setStatus(DONE);
+                } else epic.setStatus(IN_PROGRESS);
             }
         }
     }
