@@ -2,6 +2,8 @@ package tasks;
 
 import java.util.Objects;
 
+import static tasks.TypeTask.TASK;
+
 /**
  * Класс Задача. Простейшая сущность системы управления задачами. Включает в себя 4 поля:
  * <ul>
@@ -36,6 +38,10 @@ public class Task {
         this.status = Status.NEW;
     }
 
+    public TypeTask getType(){
+        return TASK;
+    }
+
     public void setId(int id) {
         this.id = id;
     }
@@ -48,16 +54,8 @@ public class Task {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getDescription() {
         return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public Status getStatus() {
@@ -85,8 +83,8 @@ public class Task {
     @Override
     public String toString() {
 
-        return this.getId() + "," + TypeTask.TASK + ",\'" + this.getTitle() + "\',"
-                + this.getStatus() + ",\'" + this.getDescription() + "\',\n";
+        return this.getId() + "," + TASK + ",'" + this.getTitle() + "',"
+                + this.getStatus() + ",'" + this.getDescription() + "',\n";
     }
 }
 

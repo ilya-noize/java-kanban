@@ -3,6 +3,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static tasks.TypeTask.EPIC;
+
 public class Epic extends Task {
     private final List<Integer> subTaskId;
 
@@ -14,6 +16,11 @@ public class Epic extends Task {
     public Epic(String title, String description) {
         super(title, description);
         this.subTaskId = new ArrayList<>();
+    }
+
+    @Override
+    public TypeTask getType(){
+        return EPIC;
     }
 
     public List<Integer> getSubTaskId() {
@@ -42,8 +49,7 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-
-        return this.getId() + "," + TypeTask.EPIC + ",\'" + this.getTitle() + "\',"
-                + this.getStatus() + ",\'" + this.getDescription() + "\',\n";
+        return this.getId() + "," + EPIC + ",'" + this.getTitle() + "',"
+                + this.getStatus() + ",'" + this.getDescription() + "',\n";
     }
 }

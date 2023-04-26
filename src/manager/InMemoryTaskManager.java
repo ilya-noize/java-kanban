@@ -44,7 +44,7 @@ public class InMemoryTaskManager implements TaskManager {
     protected final Map<Integer, SubTask> subtasks = new HashMap<>();
     protected final Map<Integer, Epic> epics = new HashMap<>();
 
-    protected final HistoryManager historyManager = Managers.getDefaultHistory();
+    public final HistoryManager historyManager = Managers.getDefaultHistory();
 
     /**
      * Обновление generateId для создания новой задачи
@@ -53,6 +53,7 @@ public class InMemoryTaskManager implements TaskManager {
     protected void setGenerateId(int id){
         this.generateId = ++id;
     }
+
     /**
      * Получение списка истории просмотров задач
      *

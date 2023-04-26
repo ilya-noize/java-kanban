@@ -13,33 +13,36 @@ import static tasks.TypeTask.*;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
     private static final String TASKS_CSV = "tasks.csv";
-    private static final CSVUtils FILE = new CSVUtils(TASKS_CSV);
     private static final String HEADER_LINE_TASKS = "id,type,name,status,description,epic";
     private static final String SEPARATOR_TASKS_HISTORY = "History";
-    private static final String SEPARATOR_CSV = ",";
     private static final String EXCEPTION_WRITE = "Ошибка записи из файла ";
     private static final String EXCEPTION_READ = "Ошибка чтения в файл ";
 
     FileBackedTasksManager() {
+        try {
+            new File(TASKS_CSV).createNewFile();
+        } catch (IOException e) {
+            throw new ManagerException("Невозможно создать файл " + TASKS_CSV);
+        }
     }
 
     /**
      * Save tasks in CSV-file
      */
     private void save() {
-        try (FileWriter save = new FileWriter(FILE.getFile())) {
+        try (FileWriter save = new FileWriter(TASKS_CSV)) {
             save.write(HEADER_LINE_TASKS + '\n');
             for (Task e : getAllTasks()) {
-                save.write(e.toString());
+                save.write(CSVUtils.toString(e));
             }
             for (Epic e : getAllEpics()) {
-                save.write(e.toString());
+                save.write(CSVUtils.toString(e));
             }
             for (SubTask e : getAllSubTasks()) {
-                save.write(e.toString());
+                save.write(CSVUtils.toString(e));
             }
 
-            save.write(SEPARATOR_TASKS_HISTORY + '\n' + historyToString(historyManager));
+            save.write(SEPARATOR_TASKS_HISTORY + '\n' + CSVUtils.historyToString(historyManager));
         } catch (IOException e) {
             throw new ManagerException(EXCEPTION_WRITE + TASKS_CSV);
         }
@@ -48,7 +51,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     private static FileBackedTasksManager loadFromFile() {
         FileBackedTasksManager recoveredTasksManager = new FileBackedTasksManager();
-        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(FILE.getFile()))) {
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(TASKS_CSV))) {
             String line;
             boolean headerIsOver = false;
             boolean historySeparatorIsOver = false;
@@ -74,57 +77,27 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
      * @param line строка файла
      */
     private static void recoveredTasks(String line, FileBackedTasksManager manager){
-        String[] array = line.split(SEPARATOR_CSV);
-        Task task = fromString(array);
+        Task task = CSVUtils.fromString(line);
         manager.setGenerateId(task.getId());
-        TypeTask typeTask = TypeTask.valueOf(array[1]);
+        TypeTask typeTask = task.getType();
         if(typeTask.equals(SUBTASK)){
-            manager.subtasks.put(Integer.valueOf(array[0]), (SubTask) task);
+            manager.subtasks.put(task.getId(), (SubTask) task);
         } else if (typeTask.equals(TASK)) {
-            manager.tasks.put(Integer.valueOf(array[0]), task);
+            manager.tasks.put(task.getId(), task);
         } else if (typeTask.equals(EPIC)) {
-            manager.epics.put(Integer.valueOf(array[0]), (Epic) task);
+            manager.epics.put(task.getId(), (Epic) task);
         }
     }
 
-    /**
-     * Создание задачи из строки
-     * @param array Массив строк формата {1,TASK,'Task 1',NEW,'Description by Task 1',};
-     * @return (Задача / Эпик)/ПодЗадача.
-     */
-    private static Task fromString(String[] array) {
-        int id = Integer.parseInt(array[0]);
-        TypeTask typeTask = TypeTask.valueOf(array[1]);
-        String title = quoteOff(array[2]);
-        String description = quoteOff(array[4]);
-        Status status = Status.valueOf(array[3]);
-
-        if (typeTask.equals(SUBTASK)) {
-            return new SubTask(id, title, description, status, Integer.parseInt(array[5]));
-        } else if (typeTask.equals(TASK)) {
-            return new Task(id, title, description, status);
-        } else {
-            return new Epic(id, title, description, status);
-        }
-    }
-
-    /**
-     * Удаление символа ['] в начале и конце строки
-     * @param stringInQuotes 'исходная строка в кавычках'
-     * @return полученная строка без кавычек
-     */
-    private static String quoteOff(String stringInQuotes){
-        return stringInQuotes.substring(1, stringInQuotes.length() - 1);
-    }
 
     private static void historyFromString(String stringWithHistory, FileBackedTasksManager manager) {
         //2,4,5,9
         int id;
-        for (String taskId : stringWithHistory.split(SEPARATOR_CSV)) {
+        for (String taskId : CSVUtils.historyFromString(stringWithHistory)) {
             id = Integer.parseInt(taskId);
             manager.historyManager.add(getTaskInMemory(id, manager));
         }
-        manager.historyToString(manager.historyManager);
+        CSVUtils.historyToString(manager.historyManager);
     }
 
     /**
@@ -146,22 +119,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             return manager.epics.get(id);
         }
         return new Task();
-    }
-
-    /**
-     * Для сохранения истории в CSV
-     * @return Строка для сохранения в файл
-     */
-    private String historyToString(HistoryManager manager) {
-        StringBuilder out = new StringBuilder();
-        int end;
-        for (Task task : manager.getHistory()) {
-            out.append(task.getId()).append(",");
-        }
-        if ((end = out.lastIndexOf(",")) != -1) {
-            return out.substring(0, end);
-        }
-        return "";
     }
 
     @Override

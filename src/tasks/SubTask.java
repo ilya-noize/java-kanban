@@ -2,6 +2,8 @@ package tasks;
 
 import java.util.Objects;
 
+import static tasks.TypeTask.SUBTASK;
+
 public class SubTask extends Task{
     protected int epicId;
 
@@ -21,12 +23,13 @@ public class SubTask extends Task{
         this.epicId = epicId;
     }
 
-    public int getEpicId() {
-        return epicId;
+    @Override
+    public TypeTask getType(){
+        return SUBTASK;
     }
 
-    public void setEpicId(int epicId) {
-        this.epicId = epicId;
+    public int getEpicId() {
+        return epicId;
     }
 
     @Override
@@ -46,8 +49,7 @@ public class SubTask extends Task{
 
     @Override
     public String toString() {
-
-        return this.getId() + "," + TypeTask.SUBTASK + ",\'" + this.getTitle() + "\',"
-                + this.getStatus() + ",\'" + this.getDescription() + "\'," + this.getEpicId() + "\n";
+        return this.getId() + "," + SUBTASK + ",'" + this.getTitle() + "',"
+                + this.getStatus() + ",'" + this.getDescription() + "'," + this.getEpicId() + "\n";
     }
 }
