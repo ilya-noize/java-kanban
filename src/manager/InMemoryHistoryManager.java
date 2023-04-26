@@ -1,6 +1,5 @@
 package manager;
 
-import exception.ManagerException;
 import tasks.Task;
 
 import java.util.*;
@@ -39,9 +38,6 @@ public class InMemoryHistoryManager implements HistoryManager {
      * @param node узел двусвязного списка
      */
     private void removeNode(Node node){
-        if (begin.equals(null)) {
-            throw new ManagerException("История просмотра пуста.");
-        }
         if(node.equals(begin)){
             begin = node.next;
             begin.prev = null;
