@@ -46,7 +46,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
 
-    public static FileBackedTasksManager loadFromFile() {
+    private static FileBackedTasksManager loadFromFile() {
         FileBackedTasksManager recoveredTasksManager = new FileBackedTasksManager();
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(FILE.getFile()))) {
             String line;
@@ -92,7 +92,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
      * @param array Массив строк формата {1,TASK,'Task 1',NEW,'Description by Task 1',};
      * @return (Задача / Эпик)/ПодЗадача.
      */
-    public static Task fromString(String[] array) {
+    private static Task fromString(String[] array) {
         int id = Integer.parseInt(array[0]);
         TypeTask typeTask = TypeTask.valueOf(array[1]);
         String title = quoteOff(array[2]);
@@ -311,7 +311,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
      * Тестирование работы менеджера истории просмотров
      * @param typeTaskListId хэшмап с id задач из getTaskIdMapTest или addTasksTest
      */
-    public static void getTaskListTest(Map<TypeTask,List<Integer>> typeTaskListId){
+    private static void getTaskListTest(Map<TypeTask,List<Integer>> typeTaskListId){
         /* Records in history.
          U      unical record. Recording in last place;
          again  contains record. After deleting contains record will unical;
@@ -340,7 +340,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
      * @param type тип задачи
      * @param id Номер задачи
      */
-    public static void getTaskTest(TypeTask type, Integer id){
+    private static void getTaskTest(TypeTask type, Integer id){
         System.out.printf ("get %7s:%d .......................... ",type, id);
         switch(type){
             case TASK:    backedTasksManager.getTask(id);    break;
