@@ -62,7 +62,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 } else if (!line.isBlank()){
                     historyFromString(line, recoveredTasksManager);
                 }
-
             }
         } catch (IOException e) {
             throw new ManagerException(EXCEPTION_READ + TASKS_CSV);
@@ -77,6 +76,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     private static void recoveredTasks(String line, FileBackedTasksManager manager){
         String[] array = line.split(SEPARATOR_CSV);
         Task task = fromString(array);
+        manager.setGenerateId(task.getId());
         TypeTask typeTask = TypeTask.valueOf(array[1]);
         if(typeTask.equals(SUBTASK)){
             manager.subtasks.put(Integer.valueOf(array[0]), (SubTask) task);

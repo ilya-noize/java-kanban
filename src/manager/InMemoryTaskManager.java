@@ -46,7 +46,13 @@ public class InMemoryTaskManager implements TaskManager {
 
     protected final HistoryManager historyManager = Managers.getDefaultHistory();
 
-
+    /**
+     * Обновление generateId для создания новой задачи
+     * @param id id созданной задачи
+     */
+    protected void setGenerateId(int id){
+        this.generateId = ++id;
+    }
     /**
      * Получение списка истории просмотров задач
      *
