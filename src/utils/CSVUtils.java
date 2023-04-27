@@ -3,10 +3,12 @@ package utils;
 import manager.HistoryManager;
 import tasks.*;
 
-import static tasks.TypeTask.*;
+import static tasks.TypeTask.EPIC;
+import static tasks.TypeTask.SUBTASK;
 
 public class CSVUtils {
     private static final String SEPARATOR_CSV = ",";
+    private static final int LENGTH_SUBTASK_ARRAY = 8;
 
     public static String toString(Task task) {
         TypeTask typeTask = task.getType();
@@ -18,31 +20,37 @@ public class CSVUtils {
             return taskToString(task);
     }
 
-    public static String subTaskToString(SubTask epic) {
-        return epic.getId()
-                + SEPARATOR_CSV + SUBTASK
-                + SEPARATOR_CSV + "'" + epic.getTitle() + "'"
-                + SEPARATOR_CSV + epic.getStatus()
-                + SEPARATOR_CSV + "'" + epic.getDescription() + "'"
-                + SEPARATOR_CSV + epic.getEpicId() + "\n";
+    public static String epicToString(Epic epic) {
+        return epic.getId() + SEPARATOR_CSV
+                + epic.getType() + SEPARATOR_CSV
+                + "'" + epic.getTitle() + "'" + SEPARATOR_CSV
+                + epic.getStatus() + SEPARATOR_CSV
+                + "'" + epic.getDescription() + "'" + SEPARATOR_CSV
+                + "'" + epic.getStartTime() + "'" + SEPARATOR_CSV
+                + "'" + epic.getDuration() + "'" + SEPARATOR_CSV
+                + "\n";
     }
 
-    public static String epicToString(Epic task) {
-        return task.getId()
-                + SEPARATOR_CSV + EPIC
-                + SEPARATOR_CSV + "'" + task.getTitle() + "'"
-                + SEPARATOR_CSV + task.getStatus()
-                + SEPARATOR_CSV + "'" + task.getDescription() + "'"
-                + SEPARATOR_CSV + "\n";
+    public static String taskToString(Task task) {
+        return task.getId() + SEPARATOR_CSV
+                + task.getType() + SEPARATOR_CSV
+                + "'" + task.getTitle() + "'" + SEPARATOR_CSV
+                + task.getStatus() + SEPARATOR_CSV
+                + "'" + task.getDescription() + "'" + SEPARATOR_CSV
+                + "'" + task.getStartTime() + "'" + SEPARATOR_CSV
+                + "'" + task.getDuration() + "'" + SEPARATOR_CSV
+                + "\n";
     }
 
-    public static String taskToString(Task subTask) {
-        return subTask.getId()
-                + SEPARATOR_CSV + TASK
-                + SEPARATOR_CSV + "'" + subTask.getTitle() + "'"
-                + SEPARATOR_CSV + subTask.getStatus()
-                + SEPARATOR_CSV + "'" + subTask.getDescription() + "'"
-                + SEPARATOR_CSV + "\n";
+    public static String subTaskToString(SubTask subTask) {
+        return subTask.getId() + SEPARATOR_CSV
+                + subTask.getType() + SEPARATOR_CSV
+                + "'" + subTask.getTitle() + "'" + SEPARATOR_CSV
+                + subTask.getStatus() + SEPARATOR_CSV
+                + "'" + subTask.getDescription() + "'" + SEPARATOR_CSV
+                + "'" + subTask.getStartTime() + "'" + SEPARATOR_CSV
+                + "'" + subTask.getDuration() + "'" + SEPARATOR_CSV
+                + subTask.getEpicId() + "\n";
     }
 
     /**
@@ -56,15 +64,17 @@ public class CSVUtils {
         int id = Integer.parseInt(array[0]);
         TypeTask typeTask = TypeTask.valueOf(array[1]);
         String title = quoteOff(array[2]);
-        String description = quoteOff(array[4]);
         Status status = Status.valueOf(array[3]);
+        String description = quoteOff(array[4]);
+        String startTime = quoteOff(array[5]);
+        String duration = quoteOff(array[6]);
 
-        if (typeTask.equals(SUBTASK)) {
-            return new SubTask(id, title, description, status, Integer.parseInt(array[5]));
-        } else if (typeTask.equals(TASK)) {
-            return new Task(id, title, description, status);
+        if (typeTask.equals(SUBTASK) && array.length == LENGTH_SUBTASK_ARRAY) {
+            return new SubTask(id, title, description, status, startTime, duration, Integer.parseInt(array[7]));
+        } else if (typeTask.equals(EPIC)) {
+            return new Epic(id, title, description, status, startTime, duration);
         } else {
-            return new Epic(id, title, description, status);
+            return new Task(id, title, description, status, startTime, duration);
         }
     }
 
@@ -87,9 +97,9 @@ public class CSVUtils {
         StringBuilder out = new StringBuilder();
         int end;
         for (Task task : manager.getHistory()) {
-            out.append(task.getId()).append(",");
+            out.append(task.getId()).append(SEPARATOR_CSV);
         }
-        if ((end = out.lastIndexOf(",")) != -1) {
+        if ((end = out.lastIndexOf(SEPARATOR_CSV)) != -1) {
             return out.substring(0, end);
         }
         return "";
