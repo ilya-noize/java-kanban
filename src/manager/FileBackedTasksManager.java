@@ -13,12 +13,10 @@ import static tasks.TypeTask.*;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
     private static final String TASKS_CSV = "tasks.csv";
-    private static final String HEADER_LINE_TASKS = "id,type,name,status,description,epic";
+    private static final String HEADER_LINE_TASKS = "id,type,name,status,description,startTime,duration,epicId";
     private static final String SEPARATOR_TASKS_HISTORY = "History";
-    private static final String EXCEPTION_WRITE = "Ошибка записи из файла ";
-    private static final String EXCEPTION_READ = "Ошибка чтения в файл ";
 
-    FileBackedTasksManager() {
+    public FileBackedTasksManager() {
         try {
             new File(TASKS_CSV).createNewFile();
         } catch (IOException e) {
@@ -44,7 +42,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
             save.write(SEPARATOR_TASKS_HISTORY + '\n' + CSVUtils.historyToString(historyManager));
         } catch (IOException e) {
-            throw new ManagerException(EXCEPTION_WRITE + TASKS_CSV);
+            throw new ManagerException("Ошибка записи в файл " + TASKS_CSV);
         }
     }
 
@@ -67,7 +65,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 }
             }
         } catch (IOException e) {
-            throw new ManagerException(EXCEPTION_READ + TASKS_CSV);
+            throw new ManagerException("Ошибка чтения из файла " + TASKS_CSV);
         }
         return recoveredTasksManager;
     }
@@ -211,7 +209,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
      * </ul>
      */
 
-    private static final TaskManager backedTasksManager = Managers.getFileBackedTasks();
+    private static final TaskManager backedTasksManager = Managers.getDefaultBackedTasks();
 
     public static void main(String[] args) {
         System.out.println("Backed > > > > > > > > > > > > > > > > >\n"+
@@ -230,6 +228,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         System.out.println("TestingTechTask: showAllDataTest .......");
         showAllDataTest(backedTasksManager);
     }
+
     private static void testingTechTaskFileTest(FileBackedTasksManager recoveredTasksManager) {
         System.out.println("TestingTechTask (R): getHistory() ......");
         recoveredTasksManager.getHistory();
@@ -238,27 +237,28 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     /**
-     *     <li> создайте две задачи, эпик с тремя подзадачами и эпик без подзадач;</li>
+     * <li> создайте две задачи, эпик с тремя подзадачами и эпик без подзадач;</li>
+     *
      * @return хэшмап с id задач для get-метода
      */
-    private static Map<TypeTask,List<Integer>> addTasksTest(){
+    private static Map<TypeTask, List<Integer>> addTasksTest() {
         Map<TypeTask, List<Integer>> typeTaskListId = new HashMap<>();
 
-        typeTaskListId.put(TASK,List.of(
-                backedTasksManager.addTask(new Task("Task 1", "Description by Task 1")),
-                backedTasksManager.addTask(new Task("Task 2", "Description by Task 2"))
+        typeTaskListId.put(TASK, List.of(//"dd.MM.yyyy hh:mm"
+                backedTasksManager.addTask(new Task("Task 1", "Description by Task 1", "30.12.2022 19:00", "PT15M")),
+                backedTasksManager.addTask(new Task("Task 2", "Description by Task 2", "30.12.2022 19:30", "PT30M"))
         ));
 
-        int epicId = backedTasksManager.addEpic(new Epic("Epic 1", "Description by Epic 1"));
+        int epicId = backedTasksManager.addEpic(new Epic("Epic 1", "Description by Epic 1", "31.12.2022 12:00", "PT100M"));
         typeTaskListId.put(TypeTask.SUBTASK, List.of(
-                backedTasksManager.addSubTask(new SubTask("SubTask 1", "Description by SubTask 1", epicId)),
-                backedTasksManager.addSubTask(new SubTask("SubTask 2", "Description by SubTask 2", epicId)),
-                backedTasksManager.addSubTask(new SubTask("SubTask 3", "Description by SubTask 3", epicId))
+                backedTasksManager.addSubTask(new SubTask("SubTask 1", "Description by SubTask 1", "31.12.2022 12:00", "PT20M", epicId)),
+                backedTasksManager.addSubTask(new SubTask("SubTask 2", "Description by SubTask 2", "31.12.2022 12:30", "PT120M", epicId)),
+                backedTasksManager.addSubTask(new SubTask("SubTask 3", "Description by SubTask 3", "31.12.2022 14:30", "PT20M", epicId))
         ));
 
         typeTaskListId.put(TypeTask.EPIC, List.of(
                 epicId,
-                backedTasksManager.addEpic(new Epic("Epic 2", "Description by Epic 2"))
+                backedTasksManager.addEpic(new Epic("Epic 2", "Description by Epic 2", "31.12.2022 18:00", "PT360M"))
         ));
 
         return typeTaskListId;
@@ -295,14 +295,20 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     /**
      * Получение задачи
      * @param type тип задачи
-     * @param id Номер задачи
+     * @param id   Номер задачи
      */
     private static void getTaskTest(TypeTask type, Integer id){
         System.out.printf ("get %7s:%d .......................... ",type, id);
         switch(type){
-            case TASK:    backedTasksManager.getTask(id);    break;
-            case SUBTASK: backedTasksManager.getSubTask(id); break;
-            case EPIC:    backedTasksManager.getEpic(id);    break;
+            case TASK:
+                backedTasksManager.getTask(id);
+                break;
+            case SUBTASK:
+                backedTasksManager.getSubTask(id);
+                break;
+            case EPIC:
+                backedTasksManager.getEpic(id);
+                break;
             default:
                 throw new IllegalStateException("Unexpected TypeTask.value: " + type);
         }
