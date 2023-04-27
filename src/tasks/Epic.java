@@ -6,16 +6,16 @@ import java.util.Objects;
 import static tasks.TypeTask.EPIC;
 
 public class Epic extends Task {
-    private final List<Integer> subTaskId;
+    private final List<Integer> subTaskIds;
 
-    public Epic(int id, String title, String description, Status status) {
-        super(id, title, description, status);
-        this.subTaskId = new ArrayList<>();
+    public Epic(int id, String title, String description, Status status, String startTime, String duration) {
+        super(id, title, description, status, startTime, duration);
+        this.subTaskIds = new ArrayList<>();
     }
 
-    public Epic(String title, String description) {
-        super(title, description);
-        this.subTaskId = new ArrayList<>();
+    public Epic(String title, String description, String startTime, String duration) {
+        super(title, description, startTime, duration);
+        this.subTaskIds = new ArrayList<>();
     }
 
     @Override
@@ -23,12 +23,12 @@ public class Epic extends Task {
         return EPIC;
     }
 
-    public List<Integer> getSubTaskId() {
-        return subTaskId;
+    public List<Integer> getSubTaskIds() {
+        return subTaskIds;
     }
 
     public void removeSubtaskId(Integer id) {
-        this.subTaskId.remove(id);
+        this.subTaskIds.remove(id);
     }
 
 
@@ -39,17 +39,22 @@ public class Epic extends Task {
         if (!super.equals(o)) return false;
         Epic epic = (Epic) o;
 
-        return getSubTaskId().equals(epic.getSubTaskId());
+        return getSubTaskIds().equals(epic.getSubTaskIds());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), getSubTaskId());
+        return Objects.hash(super.hashCode(), getSubTaskIds());
     }
 
     @Override
     public String toString() {
-        return this.getId() + "," + EPIC + ",'" + this.getTitle() + "',"
-                + this.getStatus() + ",'" + this.getDescription() + "',\n";
+        return this.getId() + ","
+                + this.getType() + ",'"
+                + this.getTitle() + "',"
+                + this.getStatus() + ",'"
+                + this.getDescription() + "',"
+                + this.getStartTime() + ","
+                + this.getDuration() + ",\n";
     }
 }
