@@ -8,28 +8,40 @@ public class SubTask extends Task{
     protected int epicId;
 
     /**
-     *
-     * @param title Название задачи
-     * @param description Описание задачи
-     * @param epicId Принадлежность к главной задаче (epic)
+     * Short version Constructor
+     * @param title         Название задачи
+     * @param description   Описание задачи
+     * @param startTime     Начало выполнения задачи (дата)
+     * @param duration      Длительность выполнения по шаблону из Duration.parse {@code PnDTnHnMn.nS}
+     * @param epicId        Принадлежность к главной задаче (epic)
      */
-    public SubTask(String title, String description, int epicId) {
-        super(title, description);
+    public SubTask(String title, String description, String startTime, String duration, int epicId) {
+        super(title, description, startTime, duration);
         this.epicId = epicId;
     }
 
-    public SubTask(int id, String title, String description, Status status, int epicId) {
-        super(id, title, description, status);
+    /**
+     * Full version Constructor
+     * @param id            Номер задачи
+     * @param title         Название задачи
+     * @param description   Описание задачи
+     * @param status        Статус задачи
+     * @param startTime     Начало выполнения задачи (дата)
+     * @param duration      Длительность выполнения по шаблону из Duration.parse {@code PnDTnHnMn.nS}
+     * @param epicId        Принадлежность к главной задаче (epic)
+     */
+    public SubTask(int id, String title, String description, Status status, String startTime, String duration, int epicId) {
+        super(id, title, description, status, startTime, duration);
         this.epicId = epicId;
+    }
+
+    public int getEpicId() {
+        return epicId;
     }
 
     @Override
     public TypeTask getType(){
         return SUBTASK;
-    }
-
-    public int getEpicId() {
-        return epicId;
     }
 
     @Override
@@ -49,7 +61,13 @@ public class SubTask extends Task{
 
     @Override
     public String toString() {
-        return this.getId() + "," + SUBTASK + ",'" + this.getTitle() + "',"
-                + this.getStatus() + ",'" + this.getDescription() + "'," + this.getEpicId() + "\n";
+        return this.getId() + ","
+                + this.getType() + ",'"
+                + this.getTitle() + "',"
+                + this.getStatus() + ",'"
+                + this.getDescription() + "',"
+                + this.getStartTime() + ","
+                + this.getDuration() + ","
+                + this.getEpicId() + "\n";
     }
 }
