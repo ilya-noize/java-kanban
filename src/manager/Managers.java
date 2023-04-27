@@ -6,16 +6,15 @@ package manager;
  * Он должен возвращать объект InMemoryHistoryManager — историю просмотров.
  */
 public class Managers {
-
     public static HistoryManager getDefaultHistory() {
         return new InMemoryHistoryManager();
     }
 
-    public static TaskManager getDefaultTask() {
+    public static TaskManager getDefaultMemoryTask() {
         return new InMemoryTaskManager();
     }
 
-    public static TaskManager getFileBackedTasks(){
+    public static TaskManager getDefaultBackedTasks(){
         return new FileBackedTasksManager();
     }
 }
