@@ -1,132 +1,96 @@
-import exception.ManagerException;
 import manager.Managers;
 import manager.TaskManager;
-import tasks.Epic;
-import tasks.SubTask;
-import tasks.Task;
+import tasks.*;
 
-import java.util.ArrayList;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static tasks.Status.DONE;
+import static tasks.TypeTask.TASK;
 
 public class Main{
-    //private static final TaskManager taskManager = Managers.getDefaultTask();
-    private static final TaskManager taskManager = Managers.getFileBackedTasks();
+    protected LocalDateTime startTime;
+    protected Duration duration;
+    private static final String DATE_TIME_PATTERN = "dd.MM.yyyy HH:mm";
+    private static final DateTimeFormatter DATE_TIME = DateTimeFormatter.ofPattern(DATE_TIME_PATTERN);
 
-    public static void main(String[] args){
-        try{
-            testingByTechTask();
-        } catch (ManagerException e){
-            System.out.println(e.getMessage());
-        }
+
+    Main(){
+        //"31.12.2022 18:00", "PT360M"
+        this.startTime = LocalDateTime.parse("31.12.2022 18:00",DATE_TIME);
+        this.duration = Duration.parse("PT360M");
+    }
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+    public Duration getDuration() {
+        return duration;
+    }
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
+    private static void dataTimeDurationTest(){
+        Main obj = new Main();
+        System.out.println("getStartTime: " + obj.getStartTime());
+        System.out.println("getDuration: " + obj.getDuration());
     }
 
-    /**
-     * <h1>Тестирование работы программы</h1>
-     * После написания менеджера истории проверьте его работу:
-     * <ul>
-     *     <li> создайте две задачи, эпик с тремя подзадачами и эпик без подзадач;</li>
-     *     <li> запросите созданные задачи несколько раз в разном порядке;</li>
-     *     <li> после каждого запроса выведите историю и убедитесь, что в ней нет повторов;</li>
-     *     <li> удалите задачу, которая есть в истории, и проверьте, что при печати она не будет выводиться;</li>
-     *     <li> удалите эпик с тремя подзадачами и убедитесь, что из истории удалился как сам эпик, так и все его подзадачи.</li>
-     * </ul>
-     */
-    private static void testingByTechTask() {
-        List<Integer> taskId = new ArrayList<>();
-        List<Integer> subtaskId = new ArrayList<>();
-        List<Integer> epicId = new ArrayList<>();
 
-        taskId.add(taskManager.addTask(
-                new Task("Task 1", "Description by Task 1")));//0
-        taskId.add(taskManager.addTask(
-                new Task("Task 2", "Description by Task 2")));//1
-
-        epicId.add(taskManager.addEpic(
-                new Epic("Epic 1", "Description by Epic 1")));//0
-        subtaskId.add(taskManager.addSubTask(
-                new SubTask("SubTask 1", "Description by SubTask 1", epicId.get(0))));
-        subtaskId.add(taskManager.addSubTask(
-                new SubTask("SubTask 2", "Description by SubTask 2", epicId.get(0))));
-        subtaskId.add(taskManager.addSubTask(
-                new SubTask("SubTask 3", "Description by SubTask 3", epicId.get(0))));
-
-        epicId.add(taskManager.addEpic(
-                new Epic("Epic 2", "Description by Epic 2")));//1
-
-        taskManager.getTask(taskId.get(1));
-        System.out.println("get task " + taskId.get(1));
-
-        taskManager.getSubTask(subtaskId.get(1));
-        System.out.println("get subtask " + subtaskId.get(1));
-
-        taskManager.getTask(taskId.get(0));
-        System.out.println("get task " + taskId.get(0));
-
-        taskManager.getSubTask(subtaskId.get(0));
-        System.out.println("get subtask " + subtaskId.get(0));
-
-        getHistoryOfTasks();
-
-        taskManager.getTask(taskId.get(0));
-        System.out.println("get task " + taskId.get(0));
-
-        getHistoryOfTasks();
-
-        taskManager.getSubTask(subtaskId.get(1));
-        System.out.println("get subtask " + subtaskId.get(1));
-
-        getHistoryOfTasks();
-
-        taskManager.getTask(taskId.get(1));
-        System.out.println("get task " + taskId.get(1));
-
-        getHistoryOfTasks();
-
-        taskManager.getSubTask(subtaskId.get(2));
-        System.out.println("get subtask " + subtaskId.get(2));
-
-        taskManager.getEpic(epicId.get(0));
-        System.out.println("get epic " + epicId.get(0));
-
-        taskManager.getSubTask(subtaskId.get(2));
-        System.out.println("get subtask " + subtaskId.get(2));
-
-        getHistoryOfTasks();
-
-        taskManager.getEpic(epicId.get(1));
-        System.out.println("get epic " + epicId.get(1));
-        taskManager.getEpic(epicId.get(0));
-        System.out.println("get epic " + epicId.get(0));
-        getHistoryOfTasks();
-        taskManager.getSubTask(subtaskId.get(0));
-        System.out.println("get subtask " + subtaskId.get(0));
-        getHistoryOfTasks();
-        taskManager.getEpic(epicId.get(1));
-        System.out.println("get epic " + epicId.get(1));
-        getHistoryOfTasks();
-
-        taskManager.deleteTask(taskId.get(0));
-        System.out.println("delete task " + taskId.get(0));
-        getHistoryOfTasks();
-
-        taskManager.deleteEpic(epicId.get(0));
-        System.out.println("delete epic " + epicId.get(0));
-        getHistoryOfTasks();
-
-        //destroyData
-        taskManager.deleteTask(taskId.get(1));
-        System.out.println("delete task " + taskId.get(1));
-        getHistoryOfTasks();
-        taskManager.deleteTask(epicId.get(1));
-        //System.out.println("delete " + epicId.get(1));
-        //getHistoryOfTasks();
+    public static void main(String[] args) {
+        addTasksTest();
+        SubTask subTask = manager.getSubTask(4); //st1
+        statusSubTaskIsChangeTo(DONE, subTask);
+        manager.getAllEpics().forEach(System.out::print);
     }
 
-    private static void getHistoryOfTasks() {
-        System.out.println("checking taskManager.getHistory ---------------->begin");
-        for (Object task : taskManager.getHistory()) {
-            System.out.print(task.toString());
-        }
-        System.out.println("end<-------------------------- taskManager.getHistory");
+
+    public static TaskManager manager = Managers.getDefaultMemoryTask();
+    public static Map<TypeTask, List<Integer>> idTasks = new HashMap<>();
+
+    private static void addTasksTest() {
+        idTasks.put(TASK, List.of(//"dd.MM.yyyy hh:mm"
+                manager.addTask(new Task(                   //1
+                        "Task 1", "Description by Task 1", "30.12.2022 19:00", "PT15M")),
+                manager.addTask(new Task(               //2
+                        "Task 2", "Description by Task 2", "30.12.2022 19:30", "PT30M"))
+        ));
+        int epicId = manager.addEpic(new Epic(              //3
+                "Epic 1", "Description by Epic 1", "31.12.2022 12:00", "PT100M"));
+        idTasks.put(TypeTask.SUBTASK, List.of(
+                manager.addSubTask(new SubTask(         //4
+                        "SubTask 1", "Description by SubTask 1", "31.12.2022 12:00", "PT20M", epicId)),
+                manager.addSubTask(new SubTask(         //5
+                        "SubTask 2", "Description by SubTask 2", "31.12.2022 12:30", "PT120M", epicId)),
+                manager.addSubTask(new SubTask(         //6
+                        "SubTask 3", "Description by SubTask 3", "31.12.2022 14:30", "PT20M", epicId))
+        ));
+        idTasks.put(TypeTask.EPIC, List.of(
+                epicId,
+                manager.addEpic(new Epic(                   //7
+                        "Epic 2", "Description by Epic 2", "31.12.2022 18:00", "PT360M"))
+        ));
     }
+
+    public static void statusSubTaskIsChangeTo(Status status, SubTask subTask) {
+        manager.updateSubTask(new SubTask(
+                subTask.getId(),
+                subTask.getTitle(),
+                subTask.getDescription(),
+                status,
+                subTask.getStartTime(),
+                subTask.getDuration(),
+                subTask.getEpicId())
+        );
+    }
+
+
+
+
 }
