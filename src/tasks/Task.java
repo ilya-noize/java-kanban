@@ -1,5 +1,8 @@
 package tasks;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 import static tasks.TypeTask.TASK;
@@ -14,21 +17,45 @@ import static tasks.TypeTask.TASK;
  * </ul>
  */
 public class Task {
-    protected int id;
+    private int id;
     protected String title;
     protected String description;
     protected Status status;
+    protected LocalDateTime startTime;
+    protected Duration duration;
+    private static final String DATE_TIME_PATTERN = "dd.MM.yyyy HH:mm";//31.09.1876 23:45
+    private static final DateTimeFormatter DATE_TIME = DateTimeFormatter.ofPattern(DATE_TIME_PATTERN);
 
-    public Task(int id, String title, String description, Status status) {
+    /**
+     * Full - Конструктор задачи
+     * @param id            Номер задачи
+     * @param title         Название задачи
+     * @param description   Описание задачи
+     * @param status        Статус задачи
+     * @param startTime     Начало выполнения задачи (дата)
+     * @param duration      Длительность выполнения по шаблону из Duration.parse {@code PnDTnHnMn.nS}
+     */
+    public Task(int id, String title, String description, Status status, String startTime, String duration) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.status = status;
+        this.startTime = LocalDateTime.parse(startTime,DATE_TIME);
+        this.duration = Duration.parse(duration);
     }
 
-    public Task(String title, String description) {
+    /**
+     * Simple - конструктор задачи
+     * @param title         Номер задачи
+     * @param description   Описание задачи
+     * @param startTime     Начало выполнения задачи (дата)
+     * @param duration      Длительность выполнения из {@code Duration.parse} по шаблону {@code PnDTnHnMn.nS}
+     */
+    public Task(String title, String description, String startTime, String duration) {
         this.title = title;
         this.description = description;
+        this.startTime = LocalDateTime.parse(startTime,DATE_TIME);
+        this.duration = Duration.parse(duration);
         this.status = Status.NEW;
     }
 
@@ -36,7 +63,10 @@ public class Task {
         this.title = "";
         this.description = "";
         this.status = Status.NEW;
+        this.duration = Duration.ofMinutes(0);
+        this.startTime = LocalDateTime.now();
     }
+
 
     public TypeTask getType(){
         return TASK;
@@ -62,8 +92,20 @@ public class Task {
         return status;
     }
 
-    public void setStatus(Status status) {
+    private void setStatus(Status status) {
         this.status = status;
+    }
+
+    public LocalDateTime getEndTime(){
+        return this.startTime.plusMinutes(this.duration.toMinutes());
+    }
+
+    public String getStartTime() {
+        return this.startTime.format(DATE_TIME);
+    }
+
+    public String getDuration() {
+        return duration.toString();
     }
 
     @Override
@@ -82,9 +124,13 @@ public class Task {
 
     @Override
     public String toString() {
-
-        return this.getId() + "," + TASK + ",'" + this.getTitle() + "',"
-                + this.getStatus() + ",'" + this.getDescription() + "',\n";
+        return this.getId() + ","
+                + this.getType() + ",'"
+                + this.getTitle() + "',"
+                + this.getStatus() + ",'"
+                + this.getDescription() + "',"
+                + this.getStartTime() + ","
+                + this.getDuration() + ",\n";
     }
 }
 
