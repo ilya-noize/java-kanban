@@ -152,7 +152,7 @@ public class InMemoryTaskManager implements TaskManager {
             throw new ManagerException("Название и описание задачи не могут быть пустыми.");
         if (task.getStatus() == null)
             throw new ManagerException("Статус задачи не может быть пустым.");
-        if (!epics.containsKey(id) || !subtasks.containsKey(id) || !tasks.containsKey(id))
+        if (!epics.containsKey(id) && !subtasks.containsKey(id) && !tasks.containsKey(id))
             throw new ManagerException("Такой задачи не существует.");
 
         return true;

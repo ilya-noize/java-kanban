@@ -1,3 +1,10 @@
 id,type,name,status,description,startTime,duration,epicId
+1,TASK,'Task 1',NEW,'Description by Task 1','30.12.2022 19:00','PT15M',
+2,TASK,'Task 2',NEW,'Description by Task 2','30.12.2022 19:30','PT30M',
+3,EPIC,'Epic 1',NEW,'Description by Epic 1','31.12.2022 12:00','PT2H50M',
+7,EPIC,'Epic 2',NEW,'Description by Epic 2','31.12.2022 15:00','PT1H',
+4,SUBTASK,'SubTask 1',NEW,'Description by SubTask 1','31.12.2022 12:00','PT20M',3
+5,SUBTASK,'SubTask 2',NEW,'Description by SubTask 2','31.12.2022 12:30','PT2H',3
+6,SUBTASK,'SubTask 3',NEW,'Description by SubTask 3','31.12.2022 14:30','PT20M',3
 History
-1,5
+1
