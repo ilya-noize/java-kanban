@@ -78,6 +78,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         Task task = CSVUtils.fromString(line);
         manager.setGenerateId(task.getId());
         TypeTask typeTask = task.getType();
+        /*
+        Access denied! private tasks, subtasks, epics;
+        */
         if(typeTask.equals(SUBTASK)){
             manager.subtasks.put(task.getId(), (SubTask) task);
         } else if (typeTask.equals(TASK)) {
@@ -107,6 +110,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
      * @return Задача
      */
     private static Task getTaskInMemory(int id, FileBackedTasksManager manager){
+        /*
+        Access denied! private tasks, subtasks, epics;
+        */
         if(manager.subtasks.containsKey(id)) {
             return manager.subtasks.get(id);
         }

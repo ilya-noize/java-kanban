@@ -24,23 +24,6 @@ public class Main{
         this.startTime = LocalDateTime.parse("31.12.2022 18:00",DATE_TIME);
         this.duration = Duration.parse("PT360M");
     }
-    public LocalDateTime getStartTime() {
-        return startTime;
-    }
-    public void setStartTime(LocalDateTime startTime) {
-        this.startTime = startTime;
-    }
-    public Duration getDuration() {
-        return duration;
-    }
-    public void setDuration(Duration duration) {
-        this.duration = duration;
-    }
-    private static void dataTimeDurationTest(){
-        Main obj = new Main();
-        System.out.println("getStartTime: " + obj.getStartTime());
-        System.out.println("getDuration: " + obj.getDuration());
-    }
 
 
     public static void main(String[] args) {
@@ -49,7 +32,6 @@ public class Main{
         statusSubTaskIsChangeTo(DONE, subTask);
         manager.getAllEpics().forEach(System.out::print);
     }
-
 
     public static TaskManager manager = Managers.getDefaultMemoryTask();
     public static Map<TypeTask, List<Integer>> idTasks = new HashMap<>();
@@ -84,13 +66,9 @@ public class Main{
                 subTask.getTitle(),
                 subTask.getDescription(),
                 status,
-                subTask.getStartTime(),
-                subTask.getDuration(),
+                subTask.getStartTimeToString(),
+                subTask.getDurationToString(),
                 subTask.getEpicId())
         );
     }
-
-
-
-
 }

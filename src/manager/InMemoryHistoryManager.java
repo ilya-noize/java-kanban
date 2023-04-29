@@ -42,13 +42,15 @@ public class InMemoryHistoryManager implements HistoryManager {
             begin = node.next;
             begin.prev = null;
             nodes.remove(node.task.getId());
-        } else if (node.equals(end)) {
+        }
+        if (node.equals(end)) {
             end = node.prev;
             nodes.remove(node.task.getId());
             end.next = null;
-        } else if (begin.equals(end)){
-            begin = end = null;
+        }
+        if (begin.equals(end)){
             nodes.clear();
+            begin = end = null;
         } else {
             Node nodePrev = node.prev;
             nodePrev.next = node.next;

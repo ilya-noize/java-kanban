@@ -2,9 +2,11 @@ package tasks;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.Objects;
 
+import static tasks.Status.*;
 import static tasks.TypeTask.TASK;
 
 /**
@@ -45,7 +47,7 @@ public class Task {
     }
 
     /**
-     * Simple - конструктор задачи
+     * Standard - конструктор задачи
      * @param title         Номер задачи
      * @param description   Описание задачи
      * @param startTime     Начало выполнения задачи (дата)
@@ -56,15 +58,28 @@ public class Task {
         this.description = description;
         this.startTime = LocalDateTime.parse(startTime,DATE_TIME);
         this.duration = Duration.parse(duration);
-        this.status = Status.NEW;
+        this.status = NEW;
+    }
+
+    /**
+     * Simple - конструктор задачи для Epic
+     * @param title         Номер задачи
+     * @param description   Описание задачи
+     */
+    public Task(String title, String description) {
+        this.title = title;
+        this.description = description;
+        this.startTime = LocalDateTime.ofEpochSecond(0L,0, (ZoneOffset) ZoneId.systemDefault());
+        this.duration = Duration.ofMinutes(0);
+        this.status = NEW;
     }
 
     public Task() {
         this.title = "";
         this.description = "";
-        this.status = Status.NEW;
+        this.status = NEW;
+        this.startTime = LocalDateTime.ofEpochSecond(0L,0, (ZoneOffset) ZoneId.systemDefault());
         this.duration = Duration.ofMinutes(0);
-        this.startTime = LocalDateTime.now();
     }
 
 
@@ -96,30 +111,62 @@ public class Task {
         this.status = status;
     }
 
+    public void setStatusNew(){
+        this.setStatus(NEW);
+    }
+
+    public void setStatusInProgress(){
+        this.setStatus(IN_PROGRESS);
+    }
+
+    public void setStatusDone(){
+        this.setStatus(DONE);
+    }
+
     public LocalDateTime getEndTime(){
         return this.startTime.plusMinutes(this.duration.toMinutes());
     }
 
-    public String getStartTime() {
+    public LocalDateTime getStartTime() {
+        return this.startTime;
+    }
+
+    public Duration getDuration() {
+        return this.duration;
+    }
+
+    public String getStartTimeToString() {
         return this.startTime.format(DATE_TIME);
     }
 
-    public String getDuration() {
+    public String getDurationToString() {
         return duration.toString();
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Task)) return false;
+
         Task task = (Task) o;
 
-        return title.equals(task.title) && Objects.equals(description, task.description);
+        if (getId() != task.getId()) return false;
+        if (!getTitle().equals(task.getTitle())) return false;
+        if (!getDescription().equals(task.getDescription())) return false;
+        if (getStatus() != task.getStatus()) return false;
+        if (!getStartTimeToString().equals(task.getStartTimeToString())) return false;
+        return getDurationToString().equals(task.getDurationToString());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(title, description);
+        int result = getId();
+        result = 31 * result + getTitle().hashCode();
+        result = 31 * result + getDescription().hashCode();
+        result = 31 * result + getStatus().hashCode();
+        result = 31 * result + getStartTimeToString().hashCode();
+        result = 31 * result + getDurationToString().hashCode();
+        return result;
     }
 
     @Override
@@ -128,9 +175,9 @@ public class Task {
                 + this.getType() + ",'"
                 + this.getTitle() + "',"
                 + this.getStatus() + ",'"
-                + this.getDescription() + "',"
-                + this.getStartTime() + ","
-                + this.getDuration() + ",\n";
+                + this.getDescription() + "','"
+                + this.getStartTimeToString() + "','"
+                + this.getDurationToString() + "',\n";
     }
 }
 
