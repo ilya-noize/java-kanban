@@ -2,7 +2,6 @@ package tasks;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
@@ -25,7 +24,6 @@ public class Task {
     protected Status status;
     protected LocalDateTime startTime;
     protected Duration duration;
-
     private static final String DATE_TIME_PATTERN = "dd.MM.yyyy HH:mm";//31.09.1876 23:45
     private static final DateTimeFormatter DATE_TIME = DateTimeFormatter.ofPattern(DATE_TIME_PATTERN);
 
@@ -70,7 +68,7 @@ public class Task {
     public Task(String title, String description) {
         this.title = title;
         this.description = description;
-        this.startTime = LocalDateTime.ofEpochSecond(0L,0, (ZoneOffset) ZoneId.systemDefault());
+        this.startTime = LocalDateTime.ofEpochSecond(0L,0, ZoneOffset.UTC);
         this.duration = Duration.ofMinutes(0);
         this.status = NEW;
     }
@@ -79,7 +77,7 @@ public class Task {
         this.title = "";
         this.description = "";
         this.status = NEW;
-        this.startTime = LocalDateTime.ofEpochSecond(0L,0, (ZoneOffset) ZoneId.systemDefault());
+        this.startTime = LocalDateTime.ofEpochSecond(0L,0, ZoneOffset.UTC);
         this.duration = Duration.ofMinutes(0);
     }
 

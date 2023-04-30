@@ -30,13 +30,13 @@ class TaskManagerTest{
         manager.addTask(new Task("Task 1", "Description by Task 1", "30.12.2022 19:00", "PT15M"));
         manager.addTask(new Task("Task 2", "Description by Task 2", "30.12.2022 19:30", "PT30M"));
         // 2
-        manager.addEpic(new Epic("Epic 1", "Description by Epic 1", "31.12.2022 12:00", "PT100M"));
+        manager.addEpic(new Epic("Epic 1", "Description by Epic 1"));
         // 3, 4, 5
         manager.addSubTask(new SubTask("SubTask 1", "Description by SubTask 1", "31.12.2022 12:00", "PT20M", ID_EPIC_1_FULL));
         manager.addSubTask(new SubTask("SubTask 2", "Description by SubTask 2", "31.12.2022 12:30", "PT120M", ID_EPIC_1_FULL));
         manager.addSubTask(new SubTask("SubTask 3", "Description by SubTask 3", "31.12.2022 14:30", "PT20M", ID_EPIC_1_FULL));
         // 6
-        manager.addEpic(new Epic("Epic 2", "Description by Epic 2", "31.12.2022 15:00", "PT60M"));
+        manager.addEpic(new Epic("Epic 2", "Description by Epic 2"));
     }
 
     @Test
@@ -59,9 +59,7 @@ class TaskManagerTest{
         assertEquals(2, manager.getAllTasks().size());
         final NullPointerException exception = assertThrows(
                 NullPointerException.class,
-                () -> {
-                    manager.getTask(ID_EPIC_2_EMPTY);
-                });
+                () -> manager.getTask(ID_EPIC_2_EMPTY));
         assertEquals("Task's not exists: null", exception.getMessage(), "Task is exist.");
     }
 
@@ -70,9 +68,7 @@ class TaskManagerTest{
         assertEquals(2, manager.getAllEpics().size());
         final NullPointerException exception = assertThrows(
                 NullPointerException.class,
-                () -> {
-                    manager.getEpic(ID_TASK_1);
-                });
+                () -> manager.getEpic(ID_TASK_1));
         assertEquals("Epic's not exists: null", exception.getMessage(), "Epic is exist.");
     }
 
@@ -81,9 +77,7 @@ class TaskManagerTest{
         assertEquals(3, manager.getAllSubTasks().size());
         final NullPointerException exception = assertThrows(
                 NullPointerException.class,
-                () -> {
-                    manager.getSubTask(ID_TASK_1);
-                });
+                () -> manager.getSubTask(ID_TASK_1));
         assertEquals("SubTask's not exists: null", exception.getMessage(), "SubTask is exist.");
     }
 
@@ -98,9 +92,7 @@ class TaskManagerTest{
                 NEW, "30.12.2022 19:00", "PT15M");
         final ManagerException exception = assertThrows(
                 ManagerException.class,
-                () -> {
-                    manager.updateTask(task);
-                });
+                () -> manager.updateTask(task));
         assertEquals("Название и описание задачи не могут быть пустыми.", exception.getMessage());
     }
     private void exceptionStatusIsNullThenUpdateTask() {
@@ -108,9 +100,7 @@ class TaskManagerTest{
                 null, "30.12.2022 19:00", "PT15M");
         final ManagerException exception = assertThrows(
                 ManagerException.class,
-                () -> {
-                    manager.updateTask(task);
-                });
+                () -> manager.updateTask(task));
         assertEquals("Статус задачи не может быть пустым.", exception.getMessage());
     }
 
@@ -136,9 +126,7 @@ class TaskManagerTest{
                 NEW, "30.12.2022 19:00", "PT15M", 3);
         final ManagerException exception = assertThrows(
                 ManagerException.class,
-                () -> {
-                    manager.updateSubTask(subTask);
-                });
+                () -> manager.updateSubTask(subTask));
         assertEquals("Название и описание задачи не могут быть пустыми.", exception.getMessage());
     }
     private void exceptionIfStatusIsNullThenUpdateSubTask() {
@@ -146,9 +134,7 @@ class TaskManagerTest{
                 null, "30.12.2022 19:00", "PT15M", 3);
         final ManagerException exception = assertThrows(
                 ManagerException.class,
-                () -> {
-                    manager.updateSubTask(subTask);
-                });
+                () -> manager.updateSubTask(subTask));
         assertEquals("Статус задачи не может быть пустым.", exception.getMessage());
     }
     private void exceptionNotContainsThenUpdateSubTask() {
@@ -156,9 +142,7 @@ class TaskManagerTest{
                 NEW, "30.12.2022 19:00", "PT15M", 1);
         final ManagerException exception = assertThrows(
                 ManagerException.class,
-                () -> {
-                    manager.updateSubTask(subTask);
-                });
+                () -> manager.updateSubTask(subTask));
         assertEquals("Такой задачи не существует.", exception.getMessage());
     }
 
@@ -173,9 +157,7 @@ class TaskManagerTest{
                 NEW, "30.12.2022 19:00", "PT15M");
         final ManagerException exception = assertThrows(
                 ManagerException.class,
-                () -> {
-                    manager.updateEpic(epic);
-                });
+                () -> manager.updateEpic(epic));
         assertEquals("Название и описание задачи не могут быть пустыми.", exception.getMessage());
     }
     private void exceptionIfStatusIsNullThenUpdateEpic() {
@@ -183,9 +165,7 @@ class TaskManagerTest{
                 null, "30.12.2022 19:00", "PT15M");
         final ManagerException exception = assertThrows(
                 ManagerException.class,
-                () -> {
-                    manager.updateEpic(epic);
-                });
+                () -> manager.updateEpic(epic));
         assertEquals("Статус задачи не может быть пустым.", exception.getMessage());
     }
     private void exceptionNotContainsThenUpdateEpic() {
@@ -193,9 +173,7 @@ class TaskManagerTest{
                 NEW, "30.12.2022 19:00", "PT15M");
         final ManagerException exception = assertThrows(
                 ManagerException.class,
-                () -> {
-                    manager.updateEpic(epic);
-                });
+                () -> manager.updateEpic(epic));
         assertEquals("Такой задачи не существует.", exception.getMessage());
     }
 
@@ -214,9 +192,7 @@ class TaskManagerTest{
     private void getTaskNotExist(){
         final NullPointerException exception = assertThrows(
                 NullPointerException.class,
-                () -> {
-                    manager.getTask(ID_EPIC_1_FULL);
-                });
+                () -> manager.getTask(ID_EPIC_1_FULL));
         assertEquals("Task's not exists: null", exception.getMessage());
     }
 
@@ -229,22 +205,20 @@ class TaskManagerTest{
     private void getEpicNotExist(){
         final NullPointerException exception = assertThrows(
                 NullPointerException.class,
-                () -> {
-                    manager.getEpic(ID_TASK_1);
-                });
+                () -> manager.getEpic(ID_TASK_1));
         assertEquals("Epic's not exists: null", exception.getMessage());
     }
     private void getEpicWithoutSubtask(){
         Epic epic1 = manager.getEpic(ID_EPIC_2_EMPTY);
         Epic epic2 = new Epic(ID_EPIC_2_EMPTY, "Epic 2", "Description by Epic 2",
-                NEW, "31.12.2022 15:00", "PT60M");
+                NEW, "01.01.1970 00:00", "PT0S");
         //in epic3.subtaskIds - isEmpty; epic3 equal epic4;
         assertEquals(epic1, epic2);
     }
     private void getEpicWithSubtask(){
         Epic epic1 = manager.getEpic(ID_EPIC_1_FULL);
         Epic epic2 = new Epic(ID_EPIC_1_FULL, "Epic 1", "Description by Epic 1",
-                NEW, "31.12.2022 12:00", "PT1H40M");
+                NEW, "01.01.1970 00:00", "PT0S");
         //in epic2.subtaskIds - isEmpty; epic1 not equal epic2;
         assertNotEquals(epic1, epic2);
     }
@@ -257,9 +231,7 @@ class TaskManagerTest{
     private void getSubTaskNotExist(){
         final NullPointerException exception = assertThrows(
                 NullPointerException.class,
-                () -> {
-                    manager.getSubTask(ID_TASK_1);
-                });
+                () -> manager.getSubTask(ID_TASK_1));
         assertEquals("SubTask's not exists: null", exception.getMessage());
     }
     private void getSubTaskExist(){
@@ -281,7 +253,7 @@ class TaskManagerTest{
     void addEpic() {
         Epic epic1 = manager.getEpic(ID_EPIC_2_EMPTY);
         Epic epic2 = new Epic(ID_EPIC_2_EMPTY, "Epic 2", "Description by Epic 2",
-                NEW, "31.12.2022 15:00", "PT60M");
+                NEW, "01.01.1970 00:00", "PT0S");
         assertEquals(epic1, epic2);
     }
 
@@ -301,9 +273,7 @@ class TaskManagerTest{
                 NEW, "31.12.2022 12:00", "PT20M", 1000);
         final ManagerException exception = assertThrows(
                 ManagerException.class,
-                () -> {
-                    manager.addSubTask(subTask);
-                });
+                () -> manager.addSubTask(subTask));
         assertEquals("Сначала создайте главную задачу.", exception.getMessage());
     }
 

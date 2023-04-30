@@ -211,8 +211,8 @@ public class InMemoryTaskManager implements TaskManager {
             Task task = tasks.get(id);
             historyManager.add(task);
             return task;
-        } catch (NullPointerException e) {
-            throw new NullPointerException("Task's not exists: " + e.getMessage());
+        } catch (ManagerException e) {
+            throw new ManagerException("Task's not exists: " + e.getMessage());
         }
     }
 
@@ -456,5 +456,27 @@ public class InMemoryTaskManager implements TaskManager {
         );
         epicNew.getSubTaskIds().addAll(epic.getSubTaskIds());
         return epicNew;
+    }
+    public Set<Task> getPrioritizedTasks(){
+        Set<Task> prioritizedTasks = new TreeSet<>((task1, task2) -> {
+            LocalDateTime time1 = task1.getStartTime();
+            LocalDateTime time2 = task2.getStartTime();
+
+            if (time1 == null) {
+                return 1;
+            }
+
+            if (time2 == null) {
+                return -1;
+            }
+
+            return time1.compareTo(time2);
+        });
+
+        prioritizedTasks.addAll(getAllTasks());
+        prioritizedTasks.addAll(getAllSubTasks());
+        prioritizedTasks.addAll(getAllEpics());
+
+        return prioritizedTasks;
     }
 }

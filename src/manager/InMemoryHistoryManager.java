@@ -11,17 +11,18 @@ import java.util.*;
  */
 public class InMemoryHistoryManager implements HistoryManager {
 
-    private final Map<Integer,Node> nodes = new HashMap<>();
+    private final Map<Integer, Node> nodes = new HashMap<>();
     private Node begin;
     private Node end;
 
     /**
      * Элемент реализации двусвязного списка задач.
      * linkLast будет добавлять задачу в конец этого списка.
+     *
      * @param task задача
      */
-    public void linkLast(Task task){
-        if(begin == null){
+    public void linkLast(Task task) {
+        if (begin == null) {
             begin = new Node(null, task, null);
             end = begin;
         } else {
@@ -35,20 +36,19 @@ public class InMemoryHistoryManager implements HistoryManager {
     /**
      * Удаление узла двусвязного списка.
      * При повторном просмотре задачи или принудительном удалении.
+     *
      * @param node узел двусвязного списка
      */
-    private void removeNode(Node node){
-        if(node.equals(begin)){
+    private void removeNode(Node node) {
+        if (node.equals(begin)) {
             begin = node.next;
             begin.prev = null;
             nodes.remove(node.task.getId());
-        }
-        if (node.equals(end)) {
+        } else if (node.equals(end)) {
             end = node.prev;
             nodes.remove(node.task.getId());
             end.next = null;
-        }
-        if (begin.equals(end)){
+        } else if (begin.equals(end)) {
             nodes.clear();
             begin = end = null;
         } else {
@@ -104,8 +104,8 @@ public class InMemoryHistoryManager implements HistoryManager {
      * @param id номер задачи
      */
     @Override
-    public void remove(int id){
-        if(nodes.containsKey(id)) {
+    public void remove(int id) {
+        if (nodes.containsKey(id)) {
             removeNode(nodes.get(id));
             nodes.remove(id);
         }

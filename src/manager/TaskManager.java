@@ -5,6 +5,7 @@ import tasks.SubTask;
 import tasks.Task;
 
 import java.util.List;
+import java.util.Set;
 
 public interface TaskManager {
 
@@ -49,4 +50,6 @@ public interface TaskManager {
   List<SubTask> getSubTasksByEpic(int id); // Получение списка всех подзадач определённого эпика.
 
   void updateEpicStatus(int id); // Проверить статус главной задачи
+
+  Set<Task> getPrioritizedTasks();
 }
