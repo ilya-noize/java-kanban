@@ -164,6 +164,9 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateTask(Task task) {
         if (updateIsValid(task)) {
+            if (!tasks.containsKey(task.getId())) {
+                throw new ManagerException("Такой задачи не существует.");
+            }
             tasks.replace(task.getId(), task);
         }
     }
@@ -174,6 +177,9 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateEpic(Epic epic) {
         if (updateIsValid(epic)) {
+            if (!epics.containsKey(epic.getId())) {
+                throw new ManagerException("Такой задачи не существует.");
+            }
             epics.replace(epic.getId(), epic);
         }
     }
@@ -184,6 +190,9 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateSubTask(SubTask subTask) {
         if (updateIsValid(subTask)) {
+            if (!subtasks.containsKey(subTask.getId())) {
+                throw new ManagerException("Такой задачи не существует.");
+            }
             subtasks.replace(subTask.getId(), subTask);
             int epicId = subTask.getEpicId();
             updateEpicStatus(epicId);
