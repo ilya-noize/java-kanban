@@ -25,6 +25,7 @@ public class Task {
     protected Status status;
     protected LocalDateTime startTime;
     protected Duration duration;
+
     private static final String DATE_TIME_PATTERN = "dd.MM.yyyy HH:mm";//31.09.1876 23:45
     private static final DateTimeFormatter DATE_TIME = DateTimeFormatter.ofPattern(DATE_TIME_PATTERN);
 
@@ -81,7 +82,6 @@ public class Task {
         this.startTime = LocalDateTime.ofEpochSecond(0L,0, (ZoneOffset) ZoneId.systemDefault());
         this.duration = Duration.ofMinutes(0);
     }
-
 
     public TypeTask getType(){
         return TASK;
