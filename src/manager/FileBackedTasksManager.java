@@ -8,41 +8,44 @@ import tasks.TypeTask;
 import utils.CSVUtils;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 import static tasks.TypeTask.*;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
-    File file;
+    private final File file;
     private static final String TASKS_CSV = "tasks.csv";
     private static final String HEADER_LINE_TASKS = "id,type,name,status,description,startTime,duration,epicId";
     private static final String SEPARATOR_TASKS_HISTORY = "History";
 
-    private static final FileBackedTasksManager manager;
-
-    static {
-        try {
-            manager = new FileBackedTasksManager(Managers.getDefaultHistory());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public FileBackedTasksManager(HistoryManager historyManager, File file) {
+    public FileBackedTasksManager(HistoryManager historyManager, File file){
         super(historyManager);
         this.file = file;
     }
 
-    public FileBackedTasksManager(HistoryManager historyManager) throws IOException {
+    public FileBackedTasksManager(HistoryManager historyManager){
         super(historyManager);
         this.file = new File(TASKS_CSV);
-        this.file.createNewFile();
+    }
+
+    private boolean prepareFile(){
+        if (file.exists()) {
+            file.delete();
+        }
+        try {
+            return file.createNewFile();
+        } catch (IOException e) {
+            throw new ManagerException("Не удалось создать файл ");// + fi le.getName());
+        }
+
     }
 
     /**
      * Сохранение задач в CSV-файл
      */
-    protected void save() {
-        try (FileWriter save = new FileWriter(TASKS_CSV)) {
+    public void save() {
+        prepareFile();
+        try (FileWriter save = new FileWriter(this.file, StandardCharsets.UTF_8)){
             save.write(HEADER_LINE_TASKS + '\n');
             for (Task e : getAllTasks()) {
                 save.write(CSVUtils.toString(e));
@@ -56,15 +59,15 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
             save.write(SEPARATOR_TASKS_HISTORY + '\n' + CSVUtils.historyToString(historyManager));
         } catch (IOException e) {
-            throw new ManagerException("Ошибка записи в файл " + TASKS_CSV);
+            throw new ManagerException("Ошибка записи в файл " + file.getName());
         }
     }
 
     /**
      * Загрузка задач из CSV-файла
      */
-    protected void loadFromFile() {
-        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(TASKS_CSV))) {
+    public void loadFromFile() {
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file, StandardCharsets.UTF_8))) {
             String line;
             boolean headerIsOver = false;
             boolean historySeparatorIsOver = false;
@@ -80,7 +83,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 }
             }
         } catch (IOException e) {
-            throw new ManagerException("Ошибка чтения из файла " + TASKS_CSV);
+            throw new ManagerException("Ошибка чтения из файла " + file.getName());
         }
     }
 
@@ -90,14 +93,14 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
      */
     private void recoveredTasks(String line) {
         Task task = CSVUtils.fromString(line);
-        manager.setGenerateId(task.getId());
+        setGenerateId(task.getId());
         TypeTask typeTask = task.getType();
         if (typeTask.equals(SUBTASK)) {
-            manager.subtasks.put(task.getId(), (SubTask) task);
+            subtasks.put(task.getId(), (SubTask) task);
         } else if (typeTask.equals(TASK)) {
-            manager.tasks.put(task.getId(), task);
+            tasks.put(task.getId(), task);
         } else if (typeTask.equals(EPIC)) {
-            manager.epics.put(task.getId(), (Epic) task);
+            epics.put(task.getId(), (Epic) task);
         }
     }
 
@@ -110,9 +113,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         int id;
         for (String taskId : CSVUtils.historyFromString(stringWithHistory)) {
             id = Integer.parseInt(taskId);
-            manager.historyManager.add(getTaskInMemory(id));
+            historyManager.add(getTaskInMemory(id));
         }
-        CSVUtils.historyToString(manager.historyManager);
+        CSVUtils.historyToString(historyManager);
     }
 
     /**
@@ -128,14 +131,14 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         /*
         Access denied! private tasks, subtasks, epics;
         */
-        if (manager.subtasks.containsKey(id)) {
-            return manager.subtasks.get(id);
+        if (subtasks.containsKey(id)) {
+            return subtasks.get(id);
         }
-        if (manager.tasks.containsKey(id)) {
-            return manager.tasks.get(id);
+        if (tasks.containsKey(id)) {
+            return tasks.get(id);
         }
-        if (manager.epics.containsKey(id)) {
-            return manager.epics.get(id);
+        if (epics.containsKey(id)) {
+            return epics.get(id);
         }
         return new Task();
     }
