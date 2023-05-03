@@ -6,9 +6,7 @@ import tasks.Status;
 import tasks.SubTask;
 import tasks.Task;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -42,6 +40,9 @@ import static tasks.Status.*;
 public class InMemoryTaskManager implements TaskManager {
     private int generateId = 1;
 
+    protected final String MSK = "Europe/Moscow";
+    protected final ZoneOffset LOCAL_TIME_ZONE = (ZoneOffset) ZoneId.of(MSK);
+    protected final HistoryManager historyManager;
     /**
      * Безопасно.
      * private tasks, subtasks, epics;
@@ -51,23 +52,9 @@ public class InMemoryTaskManager implements TaskManager {
     protected final Map<Integer, Task> tasks = new HashMap<>();
     protected final Map<Integer, SubTask> subtasks = new HashMap<>();
     protected final Map<Integer, Epic> epics = new HashMap<>();
+    private final Comparator<Task> compareToTime = Comparator.comparing(Task::getStartTime);
+    protected Set<Task> prioritizedTasks = new TreeSet<>(compareToTime);
 
-    protected Set<Task> prioritizedTasks = new TreeSet<>((task1, task2) -> {
-        LocalDateTime time1 = task1.getStartTime();
-        LocalDateTime time2 = task2.getStartTime();
-        if (time1 == null && time2 == null) {
-            return task1.getId() - task2.getId();
-        }
-        if (time1 == null) {
-            return 1;
-        }
-        if (time2 == null) {
-            return -1;
-        }
-        return time1.compareTo(time2);
-    });
-
-    public final HistoryManager historyManager;
 
     public InMemoryTaskManager(HistoryManager historyManager) {
         this.historyManager = historyManager;
@@ -171,6 +158,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void updateTask(Task task) {
         if (task != null && tasks.containsKey(task.getId())) {
             tasks.replace(task.getId(), task);
+            updatePrioritizedTasks(task);
         }
     }
 
@@ -192,6 +180,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (subTask != null && subtasks.containsKey(subTask.getId())) {
             subtasks.put(subTask.getId(), subTask);
             Epic epic = epics.get(subTask.getEpicId());
+            updatePrioritizedTasks(subTask);
             updateEpicStatus(epic);
             updateEpicTime(epic);
         }
@@ -248,6 +237,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (task != null) {
             task.setId(generateId++);
             tasks.put(task.getId(), task);
+            addPrioritizedTasks(task);
             return task;
         }
         throw new ManagerException("Задача не создана");
@@ -291,6 +281,7 @@ public class InMemoryTaskManager implements TaskManager {
                 subTask.setId(subtaskId);
                 subtasks.put(subtaskId, subTask);
                 epics.get(epicId).getSubTaskIds().add(subtaskId);
+                addPrioritizedTasks(subTask);
                 updateEpicStatus(epics.get(epicId));
                 updateEpicTime(epics.get(epicId));
                 return subTask;
@@ -308,6 +299,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteTask(int id) {
         if (tasks.containsKey(id)) {
+            prioritizedTasks.removeIf(task -> id == task.getId());
             tasks.remove(id);
             historyManager.remove(id);
         }
@@ -329,9 +321,9 @@ public class InMemoryTaskManager implements TaskManager {
         Epic epic = epics.get(id);
         if (epic != null) {
             for (int subTaskId : epic.getSubTaskIds()) {
+                prioritizedTasks.removeIf(task -> subTaskId == task.getId());
                 subtasks.remove(subTaskId);
                 historyManager.remove(subTaskId);
-
             }
             epics.remove(id);
             historyManager.remove(id);
@@ -353,6 +345,7 @@ public class InMemoryTaskManager implements TaskManager {
             epic.removeSubtaskId(subtask.getId());
             updateEpicStatus(epic);
             updateEpicTime(epic);
+            prioritizedTasks.removeIf(task -> id == task.getId());
             subtasks.remove(id);
             historyManager.remove(id);
         }
@@ -450,14 +443,114 @@ public class InMemoryTaskManager implements TaskManager {
         return IN_PROGRESS;
     }
 
-    private void updateTaskInPrioritizedTasks(){
-
+    /**
+     * Обновление в списке приоритета
+     *
+     * @param task задача для обновления
+     */
+    public void updatePrioritizedTasks(Task task) {
+        prioritizedTasks.removeIf(task1 -> task1.getId() == task.getId());
+        addPrioritizedTasks(task);
     }
 
-    public Set<Task> getPrioritizedTasks() {
-        prioritizedTasks.addAll(getAllEpics());
-        prioritizedTasks.addAll(getAllTasks());
-        prioritizedTasks.addAll(getAllSubTasks());
-        return prioritizedTasks;
+    /**
+     * Добавление задач и подзадач в список приоритета
+     *
+     * @param task задача для добавления
+     */
+    public void addPrioritizedTasks(Task task) {
+        prioritizedTasks.add(task);
+        checkTaskPriority();
+    }
+
+    /**
+     * Проверка временного приоритета задач
+     */
+    private void checkTaskPriority() {
+        List<Task> tasks = getPrioritizedTasks();
+        for (int i = 1; i < tasks.size(); i++) {
+            Task taskChecking = tasks.get(i);
+            boolean tasksCrossingTime = checkTimeCrossing(taskChecking, tasks);
+            if (tasksCrossingTime) {
+                throw new ManagerException("Task[" + taskChecking.getId() + "] overlaps Task[" + tasks.get(i - 1) + "]");
+            }
+        }
+    }
+
+    /**
+     * Конвертор LocalDateTime в список Instant
+     *
+     * @param time LocalDateTime
+     * @return Instant
+     */
+    private Instant timeToInstant(LocalDateTime time) {
+        return time.toInstant(LOCAL_TIME_ZONE);
+    }
+
+    /**
+     * Получение времени начала и расчёт конца задачи
+     *
+     * @param task задача
+     * @return Список мгновений времени для сравнения времени выполнения задач
+     */
+    private List<Instant> getInstantsArrayFromTask(Task task) {
+        LocalDateTime start = task.getStartTime();
+        long minutes = task.getDuration().toMinutes();
+        LocalDateTime end = start.plusMinutes(minutes);
+
+        return List.of(timeToInstant(start), timeToInstant(end));
+    }
+
+    /**
+     * Проверка пересечения времени выполнения задач
+     *
+     * @param taskCheck Задача на проверку
+     * @param tasks     список задач по приоритету (копия)
+     * @return true - есть пересечение: false - задачи по порядку.
+     */
+    private boolean checkTimeCrossing(Task taskCheck, List<Task> tasks) {
+
+        List<Instant> taskTime = getInstantsArrayFromTask(taskCheck);
+        Instant taskStart = taskTime.get(0);
+        Instant taskEnd = taskTime.get(1);
+
+        for (Task task : tasks) {
+
+            List<Instant> prioritizeTaskTime = getInstantsArrayFromTask(task);
+            Instant prioritizeTaskStart = prioritizeTaskTime.get(0);
+            Instant prioritizeTaskEnd = prioritizeTaskTime.get(1);
+
+
+            //taskStart<prioritizeTaskStart
+            boolean taskStartBeforePrioritizeTaskStart = taskStart.isBefore(prioritizeTaskStart);
+            //taskEnd>prioritizeTaskStart
+            boolean taskEndAfterPrioritizeTaskStart = taskEnd.isAfter(prioritizeTaskStart);
+            //taskEnd>prioritizeTaskEnd
+            boolean taskEndAfterPrioritizeTaskEnd = taskEnd.isAfter(prioritizeTaskEnd);
+            //taskStart<prioritizeTaskEnd
+            boolean taskStartBeforePrioritizeTaskEnd = taskStart.isBefore(prioritizeTaskEnd);
+
+            if (taskStartBeforePrioritizeTaskStart) {
+                if (taskEndAfterPrioritizeTaskStart) {
+                    return true;
+                } else if (taskEndAfterPrioritizeTaskEnd) {
+                    return true;
+                }
+            } else if (taskEndAfterPrioritizeTaskEnd) {
+                if (taskStartBeforePrioritizeTaskEnd) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Получение копии списка приоритетов
+     *
+     * @return список приоритетов (копия)
+     */
+    public List<Task> getPrioritizedTasks() {
+        return List.copyOf(prioritizedTasks);
     }
 }
