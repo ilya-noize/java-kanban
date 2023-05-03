@@ -3,6 +3,7 @@ package utils;
 import manager.HistoryManager;
 import tasks.*;
 
+import java.time.LocalDateTime;
 import static tasks.TypeTask.EPIC;
 import static tasks.TypeTask.SUBTASK;
 
@@ -66,15 +67,25 @@ public class CSVUtils {
         String title = quoteOff(array[2]);
         Status status = Status.valueOf(array[3]);
         String description = quoteOff(array[4]);
-        String startTime = quoteOff(array[5]);
+        LocalDateTime startTime = LocalDateTime.parse(quoteOff(array[5]));
         String duration = quoteOff(array[6]);
 
-        if (typeTask.equals(SUBTASK) && array.length == LENGTH_SUBTASK_ARRAY) {
-            return new SubTask(id, title, description, status, startTime, duration, Integer.parseInt(array[7]));
-        } else if (typeTask.equals(EPIC)) {
-            return new Epic(id, title, description, status, startTime, duration);
+        if (typeTask.equals(EPIC)) {
+            Epic epic = new Epic(title, description);
+            epic.setId(id);
+            epic.setStartEndTime(epic.getStartTime(), epic.getEndTime());
+            return epic;
+        } else if (typeTask.equals(SUBTASK) && array.length == LENGTH_SUBTASK_ARRAY) {
+            SubTask subTask = new SubTask(title, description, startTime, duration, Integer.parseInt(array[7]));
+            subTask.setId(id);
+            subTask.setStatus(status);
+            return subTask;
         } else {
-            return new Task(id, title, description, status, startTime, duration);
+            Task task = new Task(title, description, startTime, duration);
+            task.setId(id);
+            task.setStatus(status);
+            return task;
+
         }
     }
 
