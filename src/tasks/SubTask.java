@@ -1,5 +1,6 @@
 package tasks;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import static tasks.TypeTask.SUBTASK;
@@ -8,30 +9,15 @@ public class SubTask extends Task{
     protected int epicId;
 
     /**
-     * Short version Constructor
-     * @param title         Название задачи
-     * @param description   Описание задачи
-     * @param startTime     Начало выполнения задачи (дата)
-     * @param duration      Длительность выполнения по шаблону из Duration.parse {@code PnDTnHnMn.nS}
-     * @param epicId        Принадлежность к главной задаче (epic)
-     */
-    public SubTask(String title, String description, String startTime, String duration, int epicId) {
-        super(title, description, startTime, duration);
-        this.epicId = epicId;
-    }
-
-    /**
      * Full version Constructor
-     * @param id            Номер задачи
-     * @param title         Название задачи
-     * @param description   Описание задачи
-     * @param status        Статус задачи
-     * @param startTime     Начало выполнения задачи (дата)
-     * @param duration      Длительность выполнения по шаблону из Duration.parse {@code PnDTnHnMn.nS}
-     * @param epicId        Принадлежность к главной задаче (epic)
+     * @param title       Название задачи
+     * @param description Описание задачи
+     * @param startTime   Начало выполнения задачи (дата)
+     * @param duration    Длительность выполнения по шаблону из Duration.parse {@code PnDTnHnMn.nS}
+     * @param epicId      Принадлежность к главной задаче (epic)
      */
-    public SubTask(int id, String title, String description, Status status, String startTime, String duration, int epicId) {
-        super(id, title, description, status, startTime, duration);
+    public SubTask(String title, String description, LocalDateTime startTime, String duration, int epicId) {
+        super(title, description, startTime, duration);
         this.epicId = epicId;
     }
 

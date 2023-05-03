@@ -28,49 +28,31 @@ public class Task {
     private static final DateTimeFormatter DATE_TIME = DateTimeFormatter.ofPattern(DATE_TIME_PATTERN);
 
     /**
-     * Full - Конструктор задачи
-     * @param id            Номер задачи
+     * Full - Конструктор задачи (TASK, SUBTASK)
      * @param title         Название задачи
      * @param description   Описание задачи
-     * @param status        Статус задачи
      * @param startTime     Начало выполнения задачи (дата)
      * @param duration      Длительность выполнения по шаблону из Duration.parse {@code PnDTnHnMn.nS}
      */
-    public Task(int id, String title, String description, Status status, String startTime, String duration) {
-        this.id = id;
+    public Task(String title, String description, LocalDateTime startTime, String duration) {
         this.title = title;
         this.description = description;
-        this.status = status;
-        this.startTime = LocalDateTime.parse(startTime,DATE_TIME);
-        this.duration = Duration.parse(duration);
-    }
-
-    /**
-     * Standard - конструктор задачи
-     * @param title         Номер задачи
-     * @param description   Описание задачи
-     * @param startTime     Начало выполнения задачи (дата)
-     * @param duration      Длительность выполнения из {@code Duration.parse} по шаблону {@code PnDTnHnMn.nS}
-     */
-    public Task(String title, String description, String startTime, String duration) {
-        this.title = title;
-        this.description = description;
-        this.startTime = LocalDateTime.parse(startTime,DATE_TIME);
-        this.duration = Duration.parse(duration);
         this.status = NEW;
+        this.startTime = startTime;
+        this.duration = Duration.parse(duration);
     }
 
     /**
-     * Simple - конструктор задачи для Epic
+     * Standard - конструктор задачи (EPIC)
      * @param title         Номер задачи
      * @param description   Описание задачи
      */
     public Task(String title, String description) {
         this.title = title;
         this.description = description;
+        this.status = NEW;
         this.startTime = LocalDateTime.ofEpochSecond(0L,0, ZoneOffset.UTC);
         this.duration = Duration.ofMinutes(0);
-        this.status = NEW;
     }
 
     public Task() {
@@ -105,20 +87,8 @@ public class Task {
         return status;
     }
 
-    private void setStatus(Status status) {
+    public void setStatus(Status status) {
         this.status = status;
-    }
-
-    public void setStatusNew(){
-        this.setStatus(NEW);
-    }
-
-    public void setStatusInProgress(){
-        this.setStatus(IN_PROGRESS);
-    }
-
-    public void setStatusDone(){
-        this.setStatus(DONE);
     }
 
     public LocalDateTime getEndTime(){
