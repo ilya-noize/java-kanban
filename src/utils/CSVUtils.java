@@ -27,8 +27,8 @@ public class CSVUtils {
                 + "'" + epic.getTitle() + "'" + SEPARATOR_CSV
                 + epic.getStatus() + SEPARATOR_CSV
                 + "'" + epic.getDescription() + "'" + SEPARATOR_CSV
-                + "'" + epic.getStartTimeToString() + "'" + SEPARATOR_CSV
-                + "'" + epic.getDurationToString() + "'" + SEPARATOR_CSV
+                + "'" + epic.getStartTime() + "'" + SEPARATOR_CSV
+                + "'" + epic.getDuration() + "'" + SEPARATOR_CSV
                 + "\n";
     }
 
@@ -38,8 +38,8 @@ public class CSVUtils {
                 + "'" + task.getTitle() + "'" + SEPARATOR_CSV
                 + task.getStatus() + SEPARATOR_CSV
                 + "'" + task.getDescription() + "'" + SEPARATOR_CSV
-                + "'" + task.getStartTimeToString() + "'" + SEPARATOR_CSV
-                + "'" + task.getDurationToString() + "'" + SEPARATOR_CSV
+                + "'" + task.getStartTime() + "'" + SEPARATOR_CSV
+                + "'" + task.getDuration() + "'" + SEPARATOR_CSV
                 + "\n";
     }
 
@@ -49,8 +49,8 @@ public class CSVUtils {
                 + "'" + subTask.getTitle() + "'" + SEPARATOR_CSV
                 + subTask.getStatus() + SEPARATOR_CSV
                 + "'" + subTask.getDescription() + "'" + SEPARATOR_CSV
-                + "'" + subTask.getStartTimeToString() + "'" + SEPARATOR_CSV
-                + "'" + subTask.getDurationToString() + "'" + SEPARATOR_CSV
+                + "'" + subTask.getStartTime() + "'" + SEPARATOR_CSV
+                + "'" + subTask.getDuration() + "'" + SEPARATOR_CSV
                 + subTask.getEpicId() + "\n";
     }
 
