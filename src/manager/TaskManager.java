@@ -29,11 +29,11 @@ public interface TaskManager {
 
   SubTask getSubTask(int id); //  Получение подзадачи по идентификатору;
 
-  int addTask(Task task); // Создание задачи
+  Task addTask(Task task); // Создание задачи
 
-  int addEpic(Epic epic); // Создание главной задачи
+  Epic addEpic(Epic epic); // Создание главной задачи
 
-  int addSubTask(SubTask subTask); // Создание подзадачи
+  SubTask addSubTask(SubTask subTask); // Создание подзадачи
 
   void updateTask(Task task); // Обновление задачи
 
@@ -49,7 +49,7 @@ public interface TaskManager {
 
   List<SubTask> getSubTasksByEpic(int id); // Получение списка всех подзадач определённого эпика.
 
-  void updateEpicStatus(int id); // Проверить статус главной задачи
+  void updateEpicStatus(Epic epic); // Проверить статус главной задачи
 
   Set<Task> getPrioritizedTasks();
 }
