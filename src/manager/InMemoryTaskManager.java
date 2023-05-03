@@ -6,7 +6,10 @@ import tasks.Status;
 import tasks.SubTask;
 import tasks.Task;
 
-import java.time.*;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -40,8 +43,6 @@ import static tasks.Status.*;
 public class InMemoryTaskManager implements TaskManager {
     private int generateId = 1;
 
-    protected final String MSK = "Europe/Moscow";
-    protected final ZoneOffset LOCAL_TIME_ZONE = (ZoneOffset) ZoneId.of(MSK);
     protected final HistoryManager historyManager;
     /**
      * Безопасно.
@@ -484,7 +485,7 @@ public class InMemoryTaskManager implements TaskManager {
      * @return Instant
      */
     private Instant timeToInstant(LocalDateTime time) {
-        return time.toInstant(LOCAL_TIME_ZONE);
+        return time.toInstant(ZoneOffset.UTC);
     }
 
     /**
