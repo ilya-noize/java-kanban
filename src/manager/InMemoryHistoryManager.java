@@ -40,26 +40,22 @@ public class InMemoryHistoryManager implements HistoryManager {
      * @param node узел двусвязного списка
      */
     private void removeNode(Node node) {
-        if (node.equals(begin)) {
-            begin = node.next;
-            begin.prev = null;
+        if (node != null) {
             nodes.remove(node.task.getId());
-        } else if (node.equals(end)) {
-            end = node.prev;
-            nodes.remove(node.task.getId());
-            end.next = null;
-        } else if (begin.equals(end)) {
-            nodes.clear();
-            begin = end = null;
-        } else {
-            Node nodePrev = node.prev;
-            nodePrev.next = node.next;
-
-            Node nodeNext = node.next;
-            nodeNext.prev = node.prev;
-
-            nodes.remove(node.task.getId());
-            remove(node.task.getId());
+            Node NodePrev = node.prev;
+            Node NodeNext = node.next;
+            if (node.equals(begin)) {
+                begin = node.next;
+            }
+            if (node.equals(end)) {
+                end = node.prev;
+            }
+            if (NodePrev != null) {
+                NodePrev.next = NodeNext;
+            }
+            if(NodeNext != null) {
+                NodeNext.prev = NodePrev;
+            }
         }
     }
 
