@@ -25,13 +25,13 @@ class InMemoryHistoryManagerTest {
     }
 
     @BeforeEach
-    public void beforeEach() {
+    void beforeEach() {
         manager = new InMemoryHistoryManager();
     }
 
-    @DisplayName(value = "Добавление задач в историю")
     @Test
-    public void shouldAddTasks() {
+    @DisplayName(value = "Добавление задач в историю")
+    void shouldAddTasks() {
         Task task1 = newTask();
         int newTaskId1 = generateId();
         task1.setId(newTaskId1);
@@ -47,9 +47,9 @@ class InMemoryHistoryManagerTest {
         assertEquals(List.of(task1, task2, task3), manager.getHistory());
     }
 
-    @DisplayName(value = "Удаление задач из заполненной истории")
     @Test
-    public void shouldRemoveTask() {
+    @DisplayName(value = "Удаление задач из заполненной истории")
+    void shouldRemoveTask() {
         Task task1 = newTask();
         int newTaskId1 = generateId();
         task1.setId(newTaskId1);
@@ -66,9 +66,9 @@ class InMemoryHistoryManagerTest {
         assertEquals(List.of(task1, task3), manager.getHistory());
     }
 
-    @DisplayName(value = "Удаление одной задачи из заполненной истории")
     @Test
-    public void shouldRemoveOnlyOneTask() {
+    @DisplayName(value = "Удаление одной задачи из заполненной истории")
+    void shouldRemoveOnlyOneTask() {
         Task task = newTask();
         int newTaskId = generateId();
         task.setId(newTaskId);
@@ -77,10 +77,10 @@ class InMemoryHistoryManagerTest {
         assertEquals(Collections.EMPTY_LIST, manager.getHistory());
     }
 
+    @Test
     @DisplayName(value = "Удаление задач которых нет в истории " +
             "вернёт пустую коллекцию")
-    @Test
-    public void shouldHistoryIsEmpty() {
+    void shouldHistoryIsEmpty() {
         Task task1 = newTask();
         int newTaskId1 = generateId();
         task1.setId(newTaskId1);
@@ -96,9 +96,9 @@ class InMemoryHistoryManagerTest {
         assertEquals(Collections.EMPTY_LIST, manager.getHistory());
     }
 
-    @DisplayName(value = "Удаление задачи c неверным id игнорируется")
     @Test
-    public void shouldIgnoredRemoveTaskWithInvalidId() {
+    @DisplayName(value = "Удаление задачи c неверным id игнорируется")
+    void shouldIgnoredRemoveTaskWithInvalidId() {
         Task task = newTask();
         int newTaskId = generateId();
         task.setId(newTaskId);

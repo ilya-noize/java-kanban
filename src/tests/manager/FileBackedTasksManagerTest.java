@@ -9,7 +9,6 @@ import tasks.SubTask;
 import tasks.Task;
 
 import java.io.File;
-import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -17,28 +16,27 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class FileBackedTasksManagerTest extends TaskManagerTest<InMemoryTaskManager> {
-    private static final String TASKS_CSV_TEST = "tasks.test.csv";
-    private static final LocalDateTime TIME_NOW = LocalDateTime.now();
-    public static final Path path = Path.of(TASKS_CSV_TEST);
-    File file = new File(String.valueOf(path));
+    private final String TASKS_CSV_TEST = "tasks.test.csv";
+    private final File file = new File(TASKS_CSV_TEST);
+    private final LocalDateTime TIME_NOW = LocalDateTime.now();
 
+    @BeforeEach
     @DisplayName(value = "Подготовительные работы. " +
             "Создание менеджера для всех тестов.")
-    @BeforeEach
-    public void beforeEach() {
+    void beforeEach() {
         manager = new FileBackedTasksManager(Managers.getDefaultHistory(), file);
     }
 
-    @DisplayName(value = "Удаление файла после всех тестов.")
     @AfterEach
-    public void afterEach() {
+    @DisplayName(value = "Удаление файла после всех тестов.")
+    void afterEach() {
         file.delete();
     }
 
+    @Test
     @DisplayName(value = "Создание и сохранение задач в файл. Загрузка из файла." +
             " Проверка на наличие в списке всех задач.")
-    @Test
-    public void shouldCorrectlySaveAndLoad() {
+    void shouldCorrectlySaveAndLoad() {
         Task task = new Task("Task 1", "Description by Task 1", TIME_NOW, "PT15M");
         manager.addTask(task);
         Epic epic = new Epic("Epic 1", "Description by Epic 1");
@@ -51,9 +49,9 @@ class FileBackedTasksManagerTest extends TaskManagerTest<InMemoryTaskManager> {
         assertEquals(List.of(epic), manager.getAllEpics());
     }
 
-    @DisplayName(value = "Сохранение пустых hashmap и их загрузка из файла. Все коллекции пусты")
     @Test
-    public void shouldSaveAndLoadEmptyTasksEpicsSubtasks() {
+    @DisplayName(value = "Сохранение пустых hashmap и их загрузка из файла. Все коллекции пусты")
+    void shouldSaveAndLoadEmptyTasksEpicsSubtasks() {
         FileBackedTasksManager backedTasksManager = new FileBackedTasksManager(Managers.getDefaultHistory(), file);
         backedTasksManager.save();
         backedTasksManager.loadFromFile();
@@ -62,9 +60,9 @@ class FileBackedTasksManagerTest extends TaskManagerTest<InMemoryTaskManager> {
         assertEquals(Collections.EMPTY_LIST, manager.getAllSubTasks());
     }
 
-    @DisplayName(value = "Сохранение и загрузка с пустой историей")
     @Test
-    public void shouldSaveAndLoadEmptyHistory() {
+    @DisplayName(value = "Сохранение и загрузка с пустой историей")
+    void shouldSaveAndLoadEmptyHistory() {
         FileBackedTasksManager backedTasksManager = new FileBackedTasksManager(Managers.getDefaultHistory(), file);
         backedTasksManager.save();
         backedTasksManager.loadFromFile();

@@ -31,8 +31,8 @@ class TaskManagerTest<T extends TaskManager> {
         return new SubTask("SubTask 1", "Description by SubTask 1", TIME_NOW, "PT20M", epic.getId());
     }
 
-    @DisplayName(value = "Создаст задачу со статусом NEW и внутри списка всех эпиков")
     @Test
+    @DisplayName(value = "Создаст задачу со статусом NEW и внутри списка всех эпиков")
     public void shouldAddTask() {
         Task task = newTask();
         manager.addTask(task);
@@ -42,9 +42,9 @@ class TaskManagerTest<T extends TaskManager> {
     }
 
 
+    @Test
     @DisplayName(value = "Создаст эпик с пустым списком подзадач, статусом NEW" +
             " и внутри списка всех эпиков")
-    @Test
     public void shouldAddEpic() {
         Epic epic = newEpic();
         manager.addEpic(epic);
@@ -55,9 +55,9 @@ class TaskManagerTest<T extends TaskManager> {
     }
 
 
+    @Test
     @DisplayName(value = "Создав Эпик, создаётся подзадача со статусом NEW," +
             " внутри списка всех подзадач, привязанную к этому эпику через поле epicId")
-    @Test
     public void shouldAddSubTask() {
         Epic epic = newEpic();
         manager.addEpic(epic);
@@ -70,8 +70,8 @@ class TaskManagerTest<T extends TaskManager> {
 
     }
 
-    @DisplayName(value = "Создав подзадачу, без созданного эпика, вернёт исключение")
     @Test
+    @DisplayName(value = "Создав подзадачу, без созданного эпика, вернёт исключение")
     public void shouldAddSubTaskWithoutEpic() {
         Epic epic = newEpic();
         SubTask subTask = newSubTask(epic);
@@ -81,8 +81,8 @@ class TaskManagerTest<T extends TaskManager> {
         assertEquals("Сначала создайте главную задачу.", exception.getMessage(), "Task added.");
     }
 
-    @DisplayName(value = "Вернёт исключение, если эпик - null")
     @Test
+    @DisplayName(value = "Вернёт исключение, если эпик - null")
     void shouldReturnNullWhenAddEpicNull() {
         final ManagerException exception = assertThrows(
                 ManagerException.class,
@@ -90,8 +90,8 @@ class TaskManagerTest<T extends TaskManager> {
         assertEquals("Задача не создана", exception.getMessage(), "Task added.");
     }
 
-    @DisplayName(value = "Вернёт исключение, если подзадача - null")
     @Test
+    @DisplayName(value = "Вернёт исключение, если подзадача - null")
     void shouldReturnNullWhenAddSubTaskNull() {
         final ManagerException exception = assertThrows(
                 ManagerException.class,
@@ -100,8 +100,8 @@ class TaskManagerTest<T extends TaskManager> {
     }
 
 
-    @DisplayName(value = "Вернёт исключение с null, если задача - null")
     @Test
+    @DisplayName(value = "Вернёт исключение с null, если задача - null")
     void shouldReturnNullWhenAddTaskNull() {
         final ManagerException exception = assertThrows(
                 ManagerException.class,
@@ -109,8 +109,8 @@ class TaskManagerTest<T extends TaskManager> {
         assertEquals("Задача не создана", exception.getMessage(), "Task added.");
     }
 
-    @DisplayName(value = "Статус Задачи обновлён до IN_PROGRESS")
     @Test
+    @DisplayName(value = "Статус Задачи обновлён до IN_PROGRESS")
     public void shouldUpdateTaskStatusToInProgress() {
         Task task = newTask();
         manager.addTask(task);
@@ -119,8 +119,8 @@ class TaskManagerTest<T extends TaskManager> {
         assertEquals(IN_PROGRESS, manager.getTask(task.getId()).getStatus());
     }
 
-    @DisplayName(value = "Статус Эпика обновлён до IN_PROGRESS")
     @Test
+    @DisplayName(value = "Статус Эпика обновлён до IN_PROGRESS")
     public void shouldUpdateEpicStatusToInProgress() {
         Epic epic = newEpic();
         manager.addEpic(epic);
@@ -129,9 +129,9 @@ class TaskManagerTest<T extends TaskManager> {
         assertEquals(IN_PROGRESS, manager.getEpic(epic.getId()).getStatus());
     }
 
+    @Test
     @DisplayName(value = "Обновление статуса подзадачи на IN_PROGRESS" +
             " повлечёт обновление статуса эпика до такого же статуса")
-    @Test
     public void shouldUpdateSubTaskStatusToInProgress() {
         Epic epic = newEpic();
         Epic epic1 = manager.addEpic(epic);
@@ -143,8 +143,8 @@ class TaskManagerTest<T extends TaskManager> {
         assertEquals(IN_PROGRESS, epic1.getStatus());
     }
 
-    @DisplayName(value = "Обновление статуса задачи до DONE")
     @Test
+    @DisplayName(value = "Обновление статуса задачи до DONE")
     public void shouldUpdateTaskStatusToInDone() {
         Task task = newTask();
         manager.addTask(task);
@@ -153,8 +153,8 @@ class TaskManagerTest<T extends TaskManager> {
         assertEquals(DONE, manager.getTask(task.getId()).getStatus());
     }
 
-    @DisplayName(value = "Обновление статуса эпика до DONE")
     @Test
+    @DisplayName(value = "Обновление статуса эпика до DONE")
     public void shouldUpdateEpicStatusToInDone() {
         Epic epic = newEpic();
         manager.addEpic(epic);
@@ -162,9 +162,9 @@ class TaskManagerTest<T extends TaskManager> {
         assertEquals(DONE, manager.getEpic(epic.getId()).getStatus());
     }
 
+    @Test
     @DisplayName(value = "Обновление статуса единственной подзадачи на DONE" +
             " повлечёт обновление статуса эпика до такого же статуса")
-    @Test
     public void shouldUpdateSubTaskStatusToInDone() {
         Epic epic = newEpic();
         Epic epic1 = manager.addEpic(epic);
@@ -176,8 +176,8 @@ class TaskManagerTest<T extends TaskManager> {
         assertEquals(DONE, epic1.getStatus());
     }
 
-    @DisplayName(value = "Обновление null-задачи игнорируется")
     @Test
+    @DisplayName(value = "Обновление null-задачи игнорируется")
     public void shouldNotUpdateTaskIfNull() {
         Task task = newTask();
         manager.addTask(task);
@@ -185,8 +185,8 @@ class TaskManagerTest<T extends TaskManager> {
         assertEquals(task, manager.getTask(task.getId()));
     }
 
-    @DisplayName(value = "Обновление null-эпика игнорируется")
     @Test
+    @DisplayName(value = "Обновление null-эпика игнорируется")
     public void shouldNotUpdateEpicIfNull() {
         Epic epic = newEpic();
         manager.addEpic(epic);
@@ -194,8 +194,8 @@ class TaskManagerTest<T extends TaskManager> {
         assertEquals(epic, manager.getEpic(epic.getId()));
     }
 
-    @DisplayName(value = "Обновление null-подзадачи игнорируется")
     @Test
+    @DisplayName(value = "Обновление null-подзадачи игнорируется")
     public void shouldNotUpdateSubTaskIfNull() {
         Epic epic = newEpic();
         manager.addEpic(epic);
@@ -205,8 +205,8 @@ class TaskManagerTest<T extends TaskManager> {
         assertEquals(subTask, manager.getSubTask(subTask.getId()));
     }
 
-    @DisplayName(value = "Удаление всех задач приводит к очистке соответствующей hashmap")
     @Test
+    @DisplayName(value = "Удаление всех задач приводит к очистке соответствующей hashmap")
     public void shouldDeleteAllTasks() {
         Task task = newTask();
         manager.addTask(task);
@@ -214,9 +214,9 @@ class TaskManagerTest<T extends TaskManager> {
         assertEquals(Collections.EMPTY_LIST, manager.getAllTasks());
     }
 
+    @Test
     @DisplayName(value = "Удаление всех эпиков приводит к очистке соответствующей hashmap" +
             "и удалением всех подзадач в соответствующей hashmap")
-    @Test
     public void shouldDeleteAllEpics() {
         Epic epic = newEpic();
         manager.addEpic(epic);
@@ -224,9 +224,9 @@ class TaskManagerTest<T extends TaskManager> {
         assertEquals(Collections.EMPTY_LIST, manager.getAllEpics());
     }
 
+    @Test
     @DisplayName(value = "Удаление всех подзадач приводит к очистке соответствующей hashmap " +
             "и удалением связей 'эпик-подзадача' в поле эпика List<Integer> subTaskIds;")
-    @Test
     public void shouldDeleteAllSubTasks() {
         Epic epic = newEpic();
         manager.addEpic(epic);
@@ -237,8 +237,8 @@ class TaskManagerTest<T extends TaskManager> {
         assertTrue(manager.getAllSubTasks().isEmpty());
     }
 
-    @DisplayName(value = "Удаление единственной задачи опустошает соответствующий hashmap")
     @Test
+    @DisplayName(value = "Удаление единственной задачи опустошает соответствующий hashmap")
     public void shouldDeleteTask() {
         Task task = newTask();
         manager.addTask(task);
@@ -246,8 +246,8 @@ class TaskManagerTest<T extends TaskManager> {
         assertEquals(Collections.EMPTY_LIST, manager.getAllTasks());
     }
 
-    @DisplayName(value = "Удаление единственного эпика опустошает соответствующий hashmap")
     @Test
+    @DisplayName(value = "Удаление единственного эпика опустошает соответствующий hashmap")
     public void shouldDeleteEpic() {
         Epic epic = newEpic();
         manager.addEpic(epic);
@@ -255,8 +255,8 @@ class TaskManagerTest<T extends TaskManager> {
         assertEquals(Collections.EMPTY_LIST, manager.getAllEpics());
     }
 
-    @DisplayName(value = "Удаление задачи с несуществующим номером не влияет на соответствующий hashmap")
     @Test
+    @DisplayName(value = "Удаление задачи с несуществующим номером не влияет на соответствующий hashmap")
     public void shouldNotDeleteTaskIfInvalidId() {
         Task task = newTask();
         manager.addTask(task);
@@ -273,9 +273,9 @@ class TaskManagerTest<T extends TaskManager> {
         assertEquals(List.of(epic), manager.getAllEpics());
     }
 
+    @Test
     @DisplayName(value = "Удаление подзадачи с несуществующим номером не влияет на соответствующий hashmap," +
             "а так же и на поле subTaskIds всех эпиков")
-    @Test
     public void shouldNotDeleteSubTaskIfInvalidId() {
         Epic epic = newEpic();
         manager.addEpic(epic);
@@ -286,36 +286,36 @@ class TaskManagerTest<T extends TaskManager> {
         assertEquals(List.of(subTask.getId()), manager.getEpic(epic.getId()).getSubTaskIds());
     }
 
+    @Test
     @DisplayName(value = "Удаление задачи с несуществующим номером не влияет на соответствующий hashmap," +
             "предварительно уже очищенного от всех задач")
-    @Test
     public void shouldDoNothingIfTaskHashMapIsEmpty() {
         manager.deleteAllTasks();
         manager.deleteTask(WRONG_ID);
         assertEquals(0, manager.getAllTasks().size());
     }
 
+    @Test
     @DisplayName(value = "Удаление эпика с несуществующим номером не влияет на соответствующий hashmap," +
             "предварительно уже очищенного от всех эпиков")
-    @Test
     public void shouldDoNothingIfEpicHashMapIsEmpty() {
         manager.deleteAllEpics();
         manager.deleteEpic(WRONG_ID);
         assertTrue(manager.getAllEpics().isEmpty());
     }
 
+    @Test
     @DisplayName(value = "Удаление подзадачи с несуществующим номером не влияет на соответствующий hashmap," +
             "предварительно уже очищенного от всех подзадач")
-    @Test
     public void shouldDoNothingIfSubTaskHashMapIsEmpty() {
         manager.deleteAllEpics();
         manager.deleteSubTask(WRONG_ID);
         assertEquals(0, manager.getAllSubTasks().size());
     }
 
+    @Test
     @DisplayName(value = "Возвращает пустой список номеров подзадач " +
             "вновь созданного эпика без привязки к нему подзадач")
-    @Test
     void shouldReturnEmptyListWhenGetSubTaskByEpicIdIsEmpty() {
         Epic epic = newEpic();
         manager.addEpic(epic);
@@ -323,33 +323,33 @@ class TaskManagerTest<T extends TaskManager> {
         assertTrue(subtasks.isEmpty());
     }
 
-    @DisplayName(value = "Вернёт null если задачи с таким Id нет в списке.")
     @Test
+    @DisplayName(value = "Вернёт null если задачи с таким Id нет в списке.")
     public void shouldReturnExceptionMessageIfTaskDoesNotExist() {
         assertNull(manager.getTask(WRONG_ID));
     }
 
-    @DisplayName(value = "Вернёт null если эпика с таким Id нет в списке.")
     @Test
+    @DisplayName(value = "Вернёт null если эпика с таким Id нет в списке.")
     public void shouldReturnExceptionMessageIfEpicDoesNotExist() {
         assertNull(manager.getEpic(WRONG_ID));
     }
 
-    @DisplayName(value = "Вернёт null если подзадачи с таким Id нет в списке.")
     @Test
+    @DisplayName(value = "Вернёт null если подзадачи с таким Id нет в списке.")
     public void shouldReturnNullIfSubTaskDoesNotExist() {
         assertNull(manager.getSubTask(WRONG_ID));
     }
 
-    @DisplayName(value = "Вернёт пустую коллекцию если история пуста.")
     @Test
+    @DisplayName(value = "Вернёт пустую коллекцию если история пуста.")
     public void shouldReturnEmptyHistory() {
         assertEquals(Collections.EMPTY_LIST, manager.getHistory());
     }
 
+    @Test
     @DisplayName(value = "При обращении к задачам с несуществующими id в списке," +
             " история будет пуста")
-    @Test
     public void shouldReturnEmptyHistoryIfTasksNotExist() {
         manager.getTask(WRONG_ID);
         manager.getSubTask(WRONG_ID);
@@ -357,8 +357,8 @@ class TaskManagerTest<T extends TaskManager> {
         assertTrue(manager.getHistory().isEmpty());
     }
 
-    @DisplayName(value = "Просмотренные существующие задачи будут в истории просмотров")
     @Test
+    @DisplayName(value = "Просмотренные существующие задачи будут в истории просмотров")
     public void shouldReturnHistoryWithTasks() {
         Epic epic = newEpic();
         manager.addEpic(epic);
@@ -366,9 +366,9 @@ class TaskManagerTest<T extends TaskManager> {
         manager.addSubTask(subTask);
         manager.getEpic(epic.getId());
         manager.getSubTask(subTask.getId());
-        List<Task> list = manager.getHistory();
-        assertEquals(2, list.size());
-        assertTrue(list.contains(subTask));
-        assertTrue(list.contains(epic));
+        List<Task> tasksHistory = manager.getHistory();
+        assertEquals(2, tasksHistory.size());
+        assertTrue(tasksHistory.contains(subTask));
+        assertTrue(tasksHistory.contains(epic));
     }
 }

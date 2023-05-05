@@ -35,7 +35,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         try {
             return file.createNewFile();
         } catch (IOException e) {
-            throw new ManagerException("Не удалось создать файл ");// + fi le.getName());
+            throw new ManagerException("Не удалось создать файл ");
         }
 
     }
