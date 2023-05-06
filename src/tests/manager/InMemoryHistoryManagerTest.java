@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class InMemoryHistoryManagerTest {
     private static final LocalDateTime TIME_NOW = LocalDateTime.now();
-    HistoryManager manager;
+    private HistoryManager manager;
     private int id = 0;
 
     public int generateId() {
