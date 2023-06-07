@@ -58,6 +58,6 @@ public class SubTask extends Task{
                 + this.getDescription() + "',"
                 + this.getStartTimeToString() + ","
                 + this.getDurationToString() + ","
-                + this.getEpicId() + "\n";
+                + this.getEpicId() + "";
     }
 }
