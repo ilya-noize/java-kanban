@@ -1,4 +1,4 @@
-package http.handlers.history;
+package http.handlers.subtask.epic;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -13,11 +13,11 @@ import java.time.LocalDateTime;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-public class HistoryHandler implements HttpHandler {
+public class SubTaskByEpicHandler implements HttpHandler {
     private final Gson gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter()).create();
     private final TaskManager taskManager;
 
-    public HistoryHandler(TaskManager taskManager) {
+    public SubTaskByEpicHandler(TaskManager taskManager) {
         this.taskManager = taskManager;
     }
 
@@ -31,8 +31,16 @@ public class HistoryHandler implements HttpHandler {
         System.out.println("Обрабатывается запрос " + path + " с методом " + method);
 
         if ("GET".equals(method)) {
-            statusCode = 200;
-            response = gson.toJson(taskManager.getHistory());
+            String query = httpExchange.getRequestURI().getQuery();
+            try {
+                int id = Integer.parseInt(query.substring(query.indexOf("id=") + 3));
+                statusCode = 200;
+                response = gson.toJson(taskManager.getSubTask(id));
+            } catch (StringIndexOutOfBoundsException | NullPointerException e) {
+                response = "В запросе отсутствует необходимый параметр - id";
+            } catch (NumberFormatException e) {
+                response = "Неверный формат id";
+            }
         } else {
             response = "Некорректный запрос";
         }

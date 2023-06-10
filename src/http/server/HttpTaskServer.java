@@ -4,9 +4,9 @@ import com.sun.net.httpserver.HttpServer;
 import http.handlers.OwnerHandler;
 import http.handlers.epic.EpicHandler;
 import http.handlers.history.HistoryHandler;
+import http.handlers.subtask.SubTaskHandler;
+import http.handlers.subtask.epic.SubTaskByEpicHandler;
 import http.handlers.task.TaskHandler;
-import http.handlers.task.subtask.SubTaskHandler;
-import http.handlers.task.subtask.epic.SubTaskByEpicHandler;
 import manager.HistoryManager;
 import manager.Managers;
 import manager.TaskManager;
@@ -45,12 +45,12 @@ public class HttpTaskServer {
         this.httpServer = HttpServer.create();
 
         httpServer.bind(new InetSocketAddress(PORT), 0);
-        httpServer.createContext(PATH_TASK.get(), new TaskHandler());
-        httpServer.createContext(PATH_SUBTASK.get(), new SubTaskHandler());
-        httpServer.createContext(PATH_SUBTASK_BY_EPIC.get(), new SubTaskByEpicHandler());
-        httpServer.createContext(PATH_EPIC.get(), new EpicHandler());
-        httpServer.createContext(PATH_HISTORY.get(), new HistoryHandler());
-        httpServer.createContext(ROOT_TASK.get(), new OwnerHandler());
+        httpServer.createContext(PATH_TASK.get(), new TaskHandler(manager));
+        httpServer.createContext(PATH_SUBTASK.get(), new SubTaskHandler(manager));
+        httpServer.createContext(PATH_SUBTASK_BY_EPIC.get(), new SubTaskByEpicHandler(manager));
+        httpServer.createContext(PATH_EPIC.get(), new EpicHandler(manager));
+        httpServer.createContext(PATH_HISTORY.get(), new HistoryHandler(manager));
+        httpServer.createContext(ROOT_TASK.get(), new OwnerHandler(manager));
     }
 
     public void start() {

@@ -14,15 +14,15 @@ import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
 public class HttpTaskManager extends FileBackedTasksManager {
-    final static String TASKS = "tasks";
-    final static String SUBTASKS = "subtasks";
-    final static String EPICS = "epics";
-    final static String HISTORY = "history";
+    private final static String TASKS = "tasks";
+    private final static String SUBTASKS = "subtasks";
+    private final static String EPICS = "epics";
+    private final static String HISTORY = "history";
 
     private static final Gson gson =
             new GsonBuilder().registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter()).create();
 
-    final KVTaskClient client;
+    private final KVTaskClient client;
 
     public HttpTaskManager(HistoryManager historyManager, String path) throws IOException, InterruptedException {
         super(historyManager);
