@@ -1,13 +1,13 @@
-package http.handlers.subtask;
+package http.handlers;
 
-import adapters.LocalDateTimeAdapter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import manager.TaskManager;
-import tasks.SubTask;
+import manager.task.TaskManager;
+import tasks.Task;
+import utils.LocalDateTimeAdapter;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -15,13 +15,13 @@ import java.time.LocalDateTime;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-public class SubTaskHandler implements HttpHandler {
+public class TaskHandler implements HttpHandler {
     private final Gson gson = new GsonBuilder()
             .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
             .create();
     private final TaskManager taskManager;
 
-    public SubTaskHandler(TaskManager taskManager) {
+    public TaskHandler(TaskManager taskManager) {
         this.taskManager = taskManager;
     }
 
@@ -39,15 +39,17 @@ public class SubTaskHandler implements HttpHandler {
                 String query = exchange.getRequestURI().getQuery();
                 if (query == null) {
                     statusCode = 200;
-                    response = gson.toJson(taskManager.getAllSubTasks());
+                    String jsonString = gson.toJson(taskManager.getAllTasks());
+                    System.out.println("GET TASKS: " + jsonString);
+                    response = gson.toJson(jsonString);
                 } else {
                     try {
                         int id = Integer.parseInt(query.substring(query.indexOf("id=") + 3));
-                        SubTask subTask = taskManager.getSubTask(id);
-                        if (subTask != null) {
-                            response = gson.toJson(subTask);
+                        Task task = taskManager.getTask(id);
+                        if (task != null) {
+                            response = gson.toJson(task);
                         } else {
-                            response = "Подзадача с данным id не найдена";
+                            response = "Задача с id = " + id + " не найдена";
                         }
                         statusCode = 200;
                     } catch (StringIndexOutOfBoundsException e) {
@@ -60,17 +62,17 @@ public class SubTaskHandler implements HttpHandler {
             case "POST":
                 String bodyRequest = new String(exchange.getRequestBody().readAllBytes(), UTF_8);
                 try {
-                    SubTask subTask = gson.fromJson(bodyRequest, SubTask.class);
-                    int id = subTask.getId();
-                    if (taskManager.getSubTask(id) != null) {
-                        taskManager.updateTask(subTask);
-                        statusCode = 200;
-                        response = "Подзадача с id=" + id + " обновлена";
+                    Task task = gson.fromJson(bodyRequest, Task.class);
+                    int id = task.getId();
+                    if (taskManager.getTask(id) != null) {
+                        taskManager.updateTask(task);
+                        statusCode = 201;
+                        response = "Задача с id=" + id + " обновлена";
                     } else {
                         statusCode = 201;
-                        SubTask newSubTask = taskManager.addSubTask(subTask);
-                        System.out.println("CREATED SUBTASK: " + newSubTask);
-                        response = "Создана подзадача с id=" + newSubTask.getId();
+                        Task newTask = taskManager.addTask(task);
+                        System.out.println("CREATED TASK: " + newTask);
+                        response = "Создана задача с id=" + newTask.getId();
                     }
                 } catch (JsonSyntaxException e) {
                     response = "Неверный формат запроса";
@@ -80,12 +82,12 @@ public class SubTaskHandler implements HttpHandler {
                 response = "";
                 query = exchange.getRequestURI().getQuery();
                 if (query == null) {
-                    taskManager.deleteAllSubTasks();
+                    taskManager.deleteAllTasks();
                     statusCode = 200;
                 } else {
                     try {
                         int id = Integer.parseInt(query.substring(query.indexOf("id=") + 3));
-                        taskManager.deleteSubTask(id);
+                        taskManager.deleteTask(id);
                         statusCode = 200;
                     } catch (StringIndexOutOfBoundsException e) {
                         response = "В запросе отсутствует необходимый параметр id";
@@ -105,4 +107,19 @@ public class SubTaskHandler implements HttpHandler {
             os.write(response.getBytes());
         }
     }
+    //todo
+    /*
+    @Override
+    public void handle(HttpExchange exchange) throws IOException {
+        HttpClient client = HttpClient.newHttpClient();
+        URI url = URI.create("http://localhost:8080/tasks/task/");
+        HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
+        try {
+            //HttpResponse<String> response =
+            client.send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    */
 }

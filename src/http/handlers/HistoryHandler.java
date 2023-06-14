@@ -1,11 +1,11 @@
-package http.handlers.history;
+package http.handlers;
 
-import adapters.LocalDateTimeAdapter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import manager.TaskManager;
+import manager.task.TaskManager;
+import utils.LocalDateTimeAdapter;
 
 import java.io.IOException;
 import java.io.OutputStream;

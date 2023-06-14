@@ -1,9 +1,10 @@
 package utils;
 
-import manager.HistoryManager;
+import manager.history.HistoryManager;
 import tasks.*;
 
 import java.time.LocalDateTime;
+
 import static tasks.TypeTask.EPIC;
 import static tasks.TypeTask.SUBTASK;
 

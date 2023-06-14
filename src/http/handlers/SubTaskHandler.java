@@ -1,13 +1,13 @@
-package http.handlers.epic;
+package http.handlers;
 
-import adapters.LocalDateTimeAdapter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import manager.TaskManager;
-import tasks.Epic;
+import manager.task.TaskManager;
+import tasks.SubTask;
+import utils.LocalDateTimeAdapter;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -15,13 +15,13 @@ import java.time.LocalDateTime;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-public class EpicHandler implements HttpHandler {
+public class SubTaskHandler implements HttpHandler {
     private final Gson gson = new GsonBuilder()
             .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
             .create();
     private final TaskManager taskManager;
 
-    public EpicHandler(TaskManager taskManager) {
+    public SubTaskHandler(TaskManager taskManager) {
         this.taskManager = taskManager;
     }
 
@@ -39,17 +39,15 @@ public class EpicHandler implements HttpHandler {
                 String query = exchange.getRequestURI().getQuery();
                 if (query == null) {
                     statusCode = 200;
-                    String jsonString = gson.toJson(taskManager.getAllEpics());
-                    System.out.println("GET EPICS: " + jsonString);
-                    response = gson.toJson(jsonString);
+                    response = gson.toJson(taskManager.getAllSubTasks());
                 } else {
                     try {
                         int id = Integer.parseInt(query.substring(query.indexOf("id=") + 3));
-                        Epic epic = taskManager.getEpic(id);
-                        if (epic != null) {
-                            response = gson.toJson(epic);
+                        SubTask subTask = taskManager.getSubTask(id);
+                        if (subTask != null) {
+                            response = gson.toJson(subTask);
                         } else {
-                            response = "Главная задача с данным id не найдена";
+                            response = "Подзадача с данным id не найдена";
                         }
                         statusCode = 200;
                     } catch (StringIndexOutOfBoundsException e) {
@@ -62,17 +60,17 @@ public class EpicHandler implements HttpHandler {
             case "POST":
                 String bodyRequest = new String(exchange.getRequestBody().readAllBytes(), UTF_8);
                 try {
-                    Epic epic = gson.fromJson(bodyRequest, Epic.class);
-                    int id = epic.getId();
-                    if (taskManager.getEpic(id) != null) {
+                    SubTask subTask = gson.fromJson(bodyRequest, SubTask.class);
+                    int id = subTask.getId();
+                    if (taskManager.getSubTask(id) != null) {
+                        taskManager.updateTask(subTask);
                         statusCode = 200;
-                        taskManager.updateTask(epic);
-                        response = "Эпик с id=" + id + " обновлен";
+                        response = "Подзадача с id=" + id + " обновлена";
                     } else {
                         statusCode = 201;
-                        Epic newEpic = taskManager.addEpic(epic);
-                        System.out.println("CREATED EPIC: " + newEpic);
-                        response = "Создан эпик с id=" + newEpic.getId();
+                        SubTask newSubTask = taskManager.addSubTask(subTask);
+                        System.out.println("CREATED SUBTASK: " + newSubTask);
+                        response = "Создана подзадача с id=" + newSubTask.getId();
                     }
                 } catch (JsonSyntaxException e) {
                     response = "Неверный формат запроса";
@@ -82,12 +80,12 @@ public class EpicHandler implements HttpHandler {
                 response = "";
                 query = exchange.getRequestURI().getQuery();
                 if (query == null) {
-                    taskManager.deleteAllEpics();
+                    taskManager.deleteAllSubTasks();
                     statusCode = 200;
                 } else {
                     try {
                         int id = Integer.parseInt(query.substring(query.indexOf("id=") + 3));
-                        taskManager.deleteEpic(id);
+                        taskManager.deleteSubTask(id);
                         statusCode = 200;
                     } catch (StringIndexOutOfBoundsException e) {
                         response = "В запросе отсутствует необходимый параметр id";

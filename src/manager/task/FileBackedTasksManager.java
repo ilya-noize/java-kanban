@@ -1,6 +1,7 @@
-package manager;
+package manager.task;
 
 import exception.ManagerException;
+import manager.history.HistoryManager;
 import tasks.Epic;
 import tasks.SubTask;
 import tasks.Task;

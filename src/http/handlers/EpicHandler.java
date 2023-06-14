@@ -1,13 +1,13 @@
-package http.handlers.task;
+package http.handlers;
 
-import adapters.LocalDateTimeAdapter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import manager.TaskManager;
-import tasks.Task;
+import manager.task.TaskManager;
+import tasks.Epic;
+import utils.LocalDateTimeAdapter;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -15,13 +15,13 @@ import java.time.LocalDateTime;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-public class TaskHandler implements HttpHandler {
+public class EpicHandler implements HttpHandler {
     private final Gson gson = new GsonBuilder()
             .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
             .create();
     private final TaskManager taskManager;
 
-    public TaskHandler(TaskManager taskManager) {
+    public EpicHandler(TaskManager taskManager) {
         this.taskManager = taskManager;
     }
 
@@ -39,17 +39,17 @@ public class TaskHandler implements HttpHandler {
                 String query = exchange.getRequestURI().getQuery();
                 if (query == null) {
                     statusCode = 200;
-                    String jsonString = gson.toJson(taskManager.getAllTasks());
-                    System.out.println("GET TASKS: " + jsonString);
+                    String jsonString = gson.toJson(taskManager.getAllEpics());
+                    System.out.println("GET EPICS: " + jsonString);
                     response = gson.toJson(jsonString);
                 } else {
                     try {
                         int id = Integer.parseInt(query.substring(query.indexOf("id=") + 3));
-                        Task task = taskManager.getTask(id);
-                        if (task != null) {
-                            response = gson.toJson(task);
+                        Epic epic = taskManager.getEpic(id);
+                        if (epic != null) {
+                            response = gson.toJson(epic);
                         } else {
-                            response = "Задача с id = " + id + " не найдена";
+                            response = "Главная задача с данным id не найдена";
                         }
                         statusCode = 200;
                     } catch (StringIndexOutOfBoundsException e) {
@@ -62,17 +62,17 @@ public class TaskHandler implements HttpHandler {
             case "POST":
                 String bodyRequest = new String(exchange.getRequestBody().readAllBytes(), UTF_8);
                 try {
-                    Task task = gson.fromJson(bodyRequest, Task.class);
-                    int id = task.getId();
-                    if (taskManager.getTask(id) != null) {
-                        taskManager.updateTask(task);
-                        statusCode = 201;
-                        response = "Задача с id=" + id + " обновлена";
+                    Epic epic = gson.fromJson(bodyRequest, Epic.class);
+                    int id = epic.getId();
+                    if (taskManager.getEpic(id) != null) {
+                        statusCode = 200;
+                        taskManager.updateTask(epic);
+                        response = "Эпик с id=" + id + " обновлен";
                     } else {
                         statusCode = 201;
-                        Task newTask = taskManager.addTask(task);
-                        System.out.println("CREATED TASK: " + newTask);
-                        response = "Создана задача с id=" + newTask.getId();
+                        Epic newEpic = taskManager.addEpic(epic);
+                        System.out.println("CREATED EPIC: " + newEpic);
+                        response = "Создан эпик с id=" + newEpic.getId();
                     }
                 } catch (JsonSyntaxException e) {
                     response = "Неверный формат запроса";
@@ -82,21 +82,23 @@ public class TaskHandler implements HttpHandler {
                 response = "";
                 query = exchange.getRequestURI().getQuery();
                 if (query == null) {
-                    taskManager.deleteAllTasks();
-                    statusCode = 200;
+                    taskManager.deleteAllEpics();
+                    statusCode = 204;
                 } else {
                     try {
                         int id = Integer.parseInt(query.substring(query.indexOf("id=") + 3));
-                        taskManager.deleteTask(id);
-                        statusCode = 200;
+                        taskManager.deleteEpic(id);
+                        statusCode = 204;
                     } catch (StringIndexOutOfBoundsException e) {
                         response = "В запросе отсутствует необходимый параметр id";
                     } catch (NumberFormatException e) {
+
                         response = "Неверный формат id";
                     }
                 }
                 break;
             default:
+                statusCode = 404;
                 response = "Некорректный запрос";
         }
 
@@ -107,19 +109,4 @@ public class TaskHandler implements HttpHandler {
             os.write(response.getBytes());
         }
     }
-    //todo
-    /*
-    @Override
-    public void handle(HttpExchange exchange) throws IOException {
-        HttpClient client = HttpClient.newHttpClient();
-        URI url = URI.create("http://localhost:8080/tasks/task/");
-        HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
-        try {
-            //HttpResponse<String> response =
-            client.send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-    }
-    */
 }

@@ -1,4 +1,4 @@
-package http.server;
+package http;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
@@ -8,14 +8,14 @@ import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Map;
 
-import static http.Config.PORTS.KV;
+import static http.Config.PORTS.Server;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * <h3>Постман: <a href="https://www.getpostman.com/collections/a83b61d9e1c81c10575c">link</a></h3>
  */
 public class KVServer {
-    public static final int PORT = KV.get();
+    public static final int PORT = Server.get();
     private final String apiToken;
     private final HttpServer server;
     private final Map<String, String> data = new HashMap<>();

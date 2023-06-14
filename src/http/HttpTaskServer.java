@@ -1,15 +1,10 @@
-package http.server;
+package http;
 
 import com.sun.net.httpserver.HttpServer;
-import http.handlers.OwnerHandler;
-import http.handlers.epic.EpicHandler;
-import http.handlers.history.HistoryHandler;
-import http.handlers.subtask.SubTaskHandler;
-import http.handlers.subtask.epic.SubTaskByEpicHandler;
-import http.handlers.task.TaskHandler;
-import manager.HistoryManager;
+import http.handlers.*;
 import manager.Managers;
-import manager.TaskManager;
+import manager.history.HistoryManager;
+import manager.task.TaskManager;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;

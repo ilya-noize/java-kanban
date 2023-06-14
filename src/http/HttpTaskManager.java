@@ -1,20 +1,19 @@
 package http;
 
-import adapters.LocalDateTimeAdapter;
 import com.google.gson.*;
-import http.server.KVTaskClient;
-import manager.FileBackedTasksManager;
-import manager.HistoryManager;
+import manager.history.HistoryManager;
+import manager.task.FileBackedTasksManager;
 import tasks.Epic;
 import tasks.SubTask;
 import tasks.Task;
+import utils.LocalDateTimeAdapter;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
 
-public class HTTPTaskManager extends FileBackedTasksManager {
+public class HttpTaskManager extends FileBackedTasksManager {
     private final static String TASKS = "tasks";
     private final static String SUBTASKS = "subtasks";
     private final static String EPICS = "epics";
@@ -25,7 +24,7 @@ public class HTTPTaskManager extends FileBackedTasksManager {
 
     private final KVTaskClient client;
 
-    public HTTPTaskManager(HistoryManager historyManager, String path) throws IOException, InterruptedException {
+    public HttpTaskManager(HistoryManager historyManager, String path) throws IOException, InterruptedException {
         super(historyManager);
         client = new KVTaskClient(path);
 

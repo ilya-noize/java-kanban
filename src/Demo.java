@@ -10,8 +10,8 @@ public class Demo {
                 "Description of Task 1",
                 LocalDateTime.of(2022, 12, 30, 19, 0, 0),
                 "PT15M")),
-        TASK_2(new Task("Task 1",
-                "Description of Task 1",
+        TASK_2(new Task("Task 2",
+                "Description of Task 2",
                 LocalDateTime.of(2022, 12, 30, 19, 30, 0),
                 "PT30M"));
 

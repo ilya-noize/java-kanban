@@ -1,11 +1,11 @@
 package http.handlers;
 
-import adapters.LocalDateTimeAdapter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import manager.TaskManager;
+import manager.task.TaskManager;
+import utils.LocalDateTimeAdapter;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -24,26 +24,28 @@ public class OwnerHandler implements HttpHandler {
     }
 
     @Override
-    public void handle(HttpExchange httpExchange) throws IOException {
-        int statusCode = 400;
+    public void handle(HttpExchange exchange) throws IOException {
         String response;
-        String method = httpExchange.getRequestMethod();
-        String path = String.valueOf(httpExchange.getRequestURI());
+        String method = exchange.getRequestMethod();
+        String path = exchange.getRequestURI().getQuery();
 
         System.out.println("Обрабатывается запрос " + path + " с методом " + method);
 
         if ("GET".equals(method)) {
-            statusCode = 200;
             response = gson.toJson(taskManager.getPrioritizedTasks());
+            writeResponse(response, exchange, 200);
         } else {
-            response = "Некорректный запрос";
+            writeResponse("Некорректный запрос", exchange, 405);
         }
+    }
 
-        httpExchange.getResponseHeaders().set("Content-Type", "text/plain; charset=" + UTF_8);
-        httpExchange.sendResponseHeaders(statusCode, 0);
-
-        try (OutputStream os = httpExchange.getResponseBody()) {
-            os.write(response.getBytes());
+    private void writeResponse(String body, HttpExchange exchange, int code) throws IOException {
+        byte[] responseBody = body.getBytes(UTF_8);
+        exchange.sendResponseHeaders(code, responseBody.length);
+        try (OutputStream outputStream = exchange.getResponseBody()) {
+            outputStream.write(responseBody);
+        } finally {
+            exchange.close();
         }
     }
 }

@@ -1,9 +1,9 @@
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import http.server.KVServer;
-import manager.HistoryManager;
+import http.KVServer;
 import manager.Managers;
-import manager.TaskManager;
+import manager.history.HistoryManager;
+import manager.task.TaskManager;
 import tasks.Epic;
 import tasks.SubTask;
 import tasks.Task;
@@ -13,20 +13,21 @@ import java.time.LocalDateTime;
 
 public class Main {
     public static void main(String[] args) {
-        KVServer server;
+        KVServer kv;
         try {
             Gson gson = new GsonBuilder()
                     .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
                     .setPrettyPrinting()
                     .create();
 
-            server = new KVServer();
-            server.start();
+            kv = new KVServer();
+            kv.start();
             HistoryManager historyManager = Managers.getDefaultHistory();
             TaskManager httpTaskManager = Managers.getDefault(historyManager);
 
             Task task1 = Demo.TASKS.TASK_1.getTask();
             httpTaskManager.addTask(task1);
+
             Task task2 = Demo.TASKS.TASK_2.getTask();
             httpTaskManager.addTask(task2);
 
@@ -35,8 +36,7 @@ public class Main {
             int epic1Id = epic1.getId();
 
             Epic epic2 = Demo.EPICS.EPIC_2.getEpic();
-            epic2 = httpTaskManager.addEpic(epic2);
-            int epic2Id = epic2.getId(); //not used
+            httpTaskManager.addEpic(epic2);
 
 
             SubTask subTask1 = Demo.SUBTASKS.SUBTASK_1.getSubTask();
@@ -64,7 +64,7 @@ public class Main {
             System.out.println(gson.toJson(httpTaskManager.getAllSubTasks()));
             System.out.println("getCurrentManager");
             System.out.println(httpTaskManager);
-            server.stop();
+            kv.stop();
         } catch (Exception e) {
             e.printStackTrace();
         }
