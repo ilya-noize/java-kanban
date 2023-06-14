@@ -9,13 +9,14 @@ import utils.LocalDateTimeAdapter;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 public class OwnerHandler implements HttpHandler {
-    private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
-    private final Gson gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter()).create();
+    private final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+            .create();
     private final TaskManager taskManager;
 
     public OwnerHandler(TaskManager taskManager) {
@@ -38,7 +39,7 @@ public class OwnerHandler implements HttpHandler {
             response = "Некорректный запрос";
         }
 
-        httpExchange.getResponseHeaders().set("Content-Type", "text/plain; charset=" + DEFAULT_CHARSET);
+        httpExchange.getResponseHeaders().set("Content-Type", "text/plain; charset=" + UTF_8);
         httpExchange.sendResponseHeaders(statusCode, 0);
 
         try (OutputStream os = httpExchange.getResponseBody()) {

@@ -16,23 +16,11 @@ import java.time.LocalDateTime;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class TaskHandler implements HttpHandler { //todo
-    /*
-    @Override
-    public void handle(HttpExchange exchange) throws IOException {
-        HttpClient client = HttpClient.newHttpClient();
-        URI url = URI.create("http://localhost:8080/tasks/task/");
-        HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
-        try {
-            //HttpResponse<String> response =
-            client.send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-    }
-    */
 
-    private final Gson gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class,
-            new LocalDateTimeAdapter()).create();
+
+    private final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+            .create();
     private final TaskManager taskManager;
 
     public TaskHandler(TaskManager taskManager) {
@@ -121,4 +109,18 @@ public class TaskHandler implements HttpHandler { //todo
             os.write(response.getBytes());
         }
     }
+    /*
+    @Override
+    public void handle(HttpExchange exchange) throws IOException {
+        HttpClient client = HttpClient.newHttpClient();
+        URI url = URI.create("http://localhost:8080/tasks/task/");
+        HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
+        try {
+            //HttpResponse<String> response =
+            client.send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    */
 }

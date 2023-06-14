@@ -16,7 +16,9 @@ import java.time.LocalDateTime;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class SubTaskHandler implements HttpHandler {
-    private final Gson gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter()).create();
+    private final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+            .create();
     private final TaskManager taskManager;
 
     public SubTaskHandler(TaskManager taskManager) {
