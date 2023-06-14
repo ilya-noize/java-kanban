@@ -12,8 +12,8 @@ import utils.LocalDateTimeAdapter;
 import java.time.LocalDateTime;
 
 public class Main {
+    static KVServer kv;
     public static void main(String[] args) {
-        KVServer kv;
         try {
             Gson gson = new GsonBuilder()
                     .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
