@@ -1,5 +1,6 @@
 package http;
 
+import adapters.LocalDateTimeAdapter;
 import com.google.gson.*;
 import http.server.KVTaskClient;
 import manager.FileBackedTasksManager;
@@ -7,7 +8,6 @@ import manager.HistoryManager;
 import tasks.Epic;
 import tasks.SubTask;
 import tasks.Task;
-import utils.LocalDateTimeAdapter;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -46,10 +46,10 @@ public class HTTPTaskManager extends FileBackedTasksManager {
             }
         }
 
-        JsonElement jsonSubtasks = JsonParser.parseString(client.load(SUBTASKS));
-        if (!jsonSubtasks.isJsonNull()) {
-            JsonArray jsonSubtasksArray = jsonSubtasks.getAsJsonArray();
-            for (JsonElement jsonSubtask : jsonSubtasksArray) {
+        JsonElement jsonSubTasks = JsonParser.parseString(client.load(SUBTASKS));
+        if (!jsonSubTasks.isJsonNull()) {
+            JsonArray jsonSubTasksArray = jsonSubTasks.getAsJsonArray();
+            for (JsonElement jsonSubtask : jsonSubTasksArray) {
                 SubTask task = gson.fromJson(jsonSubtask, SubTask.class);
                 this.addSubTask(task);
             }
@@ -59,13 +59,13 @@ public class HTTPTaskManager extends FileBackedTasksManager {
         if (!jsonHistoryList.isJsonNull()) {
             JsonArray jsonHistoryArray = jsonHistoryList.getAsJsonArray();
             for (JsonElement jsonTaskId : jsonHistoryArray) {
-                int taskId = jsonTaskId.getAsInt();
-                if (this.subtasks.containsKey(taskId)) {
-                    this.getSubTask(taskId);
-                } else if (this.epics.containsKey(taskId)) {
-                    this.getEpic(taskId);
-                } else if (this.tasks.containsKey(taskId)) {
-                    this.getTask(taskId);
+                int id = jsonTaskId.getAsInt();
+                if (this.epics.containsKey(id)) {
+                    this.getEpic(id);
+                } else if (this.subtasks.containsKey(id)) {
+                    this.getSubTask(id);
+                } else if (this.tasks.containsKey(id)) {
+                    this.getTask(id);
                 }
             }
         }
