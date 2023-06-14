@@ -1,11 +1,11 @@
 package http.handlers.history;
 
+import adapters.LocalDateTimeAdapter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import manager.TaskManager;
-import utils.LocalDateTimeAdapter;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -24,13 +24,13 @@ public class HistoryHandler implements HttpHandler {
     }
 
     @Override
-    public void handle(HttpExchange httpExchange) throws IOException {
+    public void handle(HttpExchange exchange) throws IOException {
         int statusCode = 400;
         String response;
-        String method = httpExchange.getRequestMethod();
-        String path = String.valueOf(httpExchange.getRequestURI());
+        String method = exchange.getRequestMethod();
+        String path = String.valueOf(exchange.getRequestURI());
 
-        System.out.println("Обрабатывается запрос " + path + " с методом " + method);
+        System.out.println("Обработка запроса " + method + " : " + path);
 
         if ("GET".equals(method)) {
             statusCode = 200;
@@ -39,10 +39,10 @@ public class HistoryHandler implements HttpHandler {
             response = "Некорректный запрос";
         }
 
-        httpExchange.getResponseHeaders().set("Content-Type", "text/plain; charset=" + UTF_8);
-        httpExchange.sendResponseHeaders(statusCode, 0);
+        exchange.getResponseHeaders().set("Content-Type", "text/plain; charset=" + UTF_8);
+        exchange.sendResponseHeaders(statusCode, 0);
 
-        try (OutputStream os = httpExchange.getResponseBody()) {
+        try (OutputStream os = exchange.getResponseBody()) {
             os.write(response.getBytes());
         }
     }

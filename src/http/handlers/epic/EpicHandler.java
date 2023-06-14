@@ -1,5 +1,6 @@
 package http.handlers.epic;
 
+import adapters.LocalDateTimeAdapter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
@@ -7,7 +8,6 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import manager.TaskManager;
 import tasks.Epic;
-import utils.LocalDateTimeAdapter;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -27,10 +27,12 @@ public class EpicHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        int statusCode;
+        int statusCode = 400;
         String response;
-
         String method = exchange.getRequestMethod();
+        String path = String.valueOf(exchange.getRequestURI());
+
+        System.out.println("Обработка запроса " + method + " : " + path);
 
         switch (method) {
             case "GET":
@@ -51,10 +53,8 @@ public class EpicHandler implements HttpHandler {
                         }
                         statusCode = 200;
                     } catch (StringIndexOutOfBoundsException e) {
-                        statusCode = 400;
                         response = "В запросе отсутствует необходимый параметр id";
                     } catch (NumberFormatException e) {
-                        statusCode = 400;
                         response = "Неверный формат id";
                     }
                 }
@@ -75,7 +75,6 @@ public class EpicHandler implements HttpHandler {
                         response = "Создан эпик с id=" + newEpic.getId();
                     }
                 } catch (JsonSyntaxException e) {
-                    statusCode = 400;
                     response = "Неверный формат запроса";
                 }
                 break;
@@ -91,16 +90,13 @@ public class EpicHandler implements HttpHandler {
                         taskManager.deleteEpic(id);
                         statusCode = 200;
                     } catch (StringIndexOutOfBoundsException e) {
-                        statusCode = 400;
                         response = "В запросе отсутствует необходимый параметр id";
                     } catch (NumberFormatException e) {
-                        statusCode = 400;
                         response = "Неверный формат id";
                     }
                 }
                 break;
             default:
-                statusCode = 400;
                 response = "Некорректный запрос";
         }
 

@@ -1,5 +1,6 @@
 package http.handlers.subtask;
 
+import adapters.LocalDateTimeAdapter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
@@ -7,7 +8,6 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import manager.TaskManager;
 import tasks.SubTask;
-import utils.LocalDateTimeAdapter;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -29,8 +29,10 @@ public class SubTaskHandler implements HttpHandler {
     public void handle(HttpExchange exchange) throws IOException {
         int statusCode = 400;
         String response;
-
         String method = exchange.getRequestMethod();
+        String path = String.valueOf(exchange.getRequestURI());
+
+        System.out.println("Обработка запроса " + method + " : " + path);
 
         switch (method) {
             case "GET":

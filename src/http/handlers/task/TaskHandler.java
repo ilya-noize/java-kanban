@@ -1,5 +1,6 @@
 package http.handlers.task;
 
+import adapters.LocalDateTimeAdapter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
@@ -7,7 +8,6 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import manager.TaskManager;
 import tasks.Task;
-import utils.LocalDateTimeAdapter;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -15,9 +15,7 @@ import java.time.LocalDateTime;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-public class TaskHandler implements HttpHandler { //todo
-
-
+public class TaskHandler implements HttpHandler {
     private final Gson gson = new GsonBuilder()
             .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
             .create();
@@ -28,17 +26,17 @@ public class TaskHandler implements HttpHandler { //todo
     }
 
     @Override
-    public void handle(HttpExchange httpExchange) throws IOException {
+    public void handle(HttpExchange exchange) throws IOException {
         int statusCode = 400;
         String response;
-        String method = httpExchange.getRequestMethod();
-        String path = String.valueOf(httpExchange.getRequestURI());
+        String method = exchange.getRequestMethod();
+        String path = String.valueOf(exchange.getRequestURI());
 
-        System.out.println("Обрабатывается запрос " + path + " с методом " + method);
+        System.out.println("Обработка запроса " + method + " : " + path);
 
         switch (method) {
             case "GET":
-                String query = httpExchange.getRequestURI().getQuery();
+                String query = exchange.getRequestURI().getQuery();
                 if (query == null) {
                     statusCode = 200;
                     String jsonString = gson.toJson(taskManager.getAllTasks());
@@ -62,7 +60,7 @@ public class TaskHandler implements HttpHandler { //todo
                 }
                 break;
             case "POST":
-                String bodyRequest = new String(httpExchange.getRequestBody().readAllBytes(), UTF_8);
+                String bodyRequest = new String(exchange.getRequestBody().readAllBytes(), UTF_8);
                 try {
                     Task task = gson.fromJson(bodyRequest, Task.class);
                     int id = task.getId();
@@ -82,7 +80,7 @@ public class TaskHandler implements HttpHandler { //todo
                 break;
             case "DELETE":
                 response = "";
-                query = httpExchange.getRequestURI().getQuery();
+                query = exchange.getRequestURI().getQuery();
                 if (query == null) {
                     taskManager.deleteAllTasks();
                     statusCode = 200;
@@ -102,13 +100,14 @@ public class TaskHandler implements HttpHandler { //todo
                 response = "Некорректный запрос";
         }
 
-        httpExchange.getResponseHeaders().set("Content-Type", "text/plain; charset=" + UTF_8);
-        httpExchange.sendResponseHeaders(statusCode, 0);
+        exchange.getResponseHeaders().set("Content-Type", "text/plain; charset=" + UTF_8);
+        exchange.sendResponseHeaders(statusCode, 0);
 
-        try (OutputStream os = httpExchange.getResponseBody()) {
+        try (OutputStream os = exchange.getResponseBody()) {
             os.write(response.getBytes());
         }
     }
+    //todo
     /*
     @Override
     public void handle(HttpExchange exchange) throws IOException {
