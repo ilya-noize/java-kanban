@@ -14,7 +14,6 @@ import manager.TaskManager;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 
-import static http.Config.PATHS.*;
 import static http.Config.PORTS.HTTP;
 
 
@@ -35,22 +34,21 @@ public class HttpTaskServer {
      * Для создания и изменения — POST-запросы.
      * Для удаления — DELETE-запросы.
      *
-     * @param httpServer HTTP-сервер API
      * @throws IOException if troubles 'create' , 'bind' throws IOException
      */
-    public HttpTaskServer(HttpServer httpServer) throws IOException {
+    public HttpTaskServer() throws IOException {
         HistoryManager historyManager = Managers.getDefaultHistory();
         TaskManager manager = Managers.getFileBackedTaskManager(historyManager);
 
         this.httpServer = HttpServer.create();
 
         httpServer.bind(new InetSocketAddress(PORT), 0);
-        httpServer.createContext(PATH_TASK.get(), new TaskHandler(manager));
-        httpServer.createContext(PATH_SUBTASK.get(), new SubTaskHandler(manager));
-        httpServer.createContext(PATH_SUBTASK_BY_EPIC.get(), new SubTaskByEpicHandler(manager));
-        httpServer.createContext(PATH_EPIC.get(), new EpicHandler(manager));
-        httpServer.createContext(PATH_HISTORY.get(), new HistoryHandler(manager));
-        httpServer.createContext(ROOT_TASK.get(), new OwnerHandler(manager));
+        httpServer.createContext("/tasks/task/", new TaskHandler(manager));
+        httpServer.createContext("/tasks/subtask/", new SubTaskHandler(manager));
+        httpServer.createContext("/tasks/subtask/epic/", new SubTaskByEpicHandler(manager));
+        httpServer.createContext("/tasks/subtask/", new EpicHandler(manager));
+        httpServer.createContext("/tasks/history/", new HistoryHandler(manager));
+        httpServer.createContext("/tasks/", new OwnerHandler(manager));
     }
 
     public void start() {

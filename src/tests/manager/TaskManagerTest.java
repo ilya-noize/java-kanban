@@ -14,7 +14,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static tasks.Status.*;
 
-class TaskManagerTest<T extends TaskManager> {
+public abstract class TaskManagerTest<T extends TaskManager> {
     private static final LocalDateTime TIME_NOW = LocalDateTime.now();
     private static final int WRONG_ID = 123;
     protected T manager;

@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
-public class HttpTaskManager extends FileBackedTasksManager {
+public class HTTPTaskManager extends FileBackedTasksManager {
     private final static String TASKS = "tasks";
     private final static String SUBTASKS = "subtasks";
     private final static String EPICS = "epics";
@@ -24,7 +24,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
 
     private final KVTaskClient client;
 
-    public HttpTaskManager(HistoryManager historyManager, String path) throws IOException, InterruptedException {
+    public HTTPTaskManager(HistoryManager historyManager, String path) throws IOException, InterruptedException {
         super(historyManager);
         client = new KVTaskClient(path);
 
