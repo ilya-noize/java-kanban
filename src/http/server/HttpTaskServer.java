@@ -24,16 +24,6 @@ public class HttpTaskServer {
     /**
      * API должен работать так, чтобы все запросы по пути /tasks/<ресурсы> приходили
      * в интерфейс TaskManager.
-     * Путь для обычных задач — /tasks/task ,
-     * для подзадач — /tasks/subtask ,
-     * для эпиков — /tasks/epic.
-     * Получить все задачи сразу можно по пути /tasks/ ,
-     * а получить историю задач по пути /tasks/history .
-     * Методы:
-     * Для получения данных должны быть GET-запросы.
-     * Для создания и изменения — POST-запросы.
-     * Для удаления — DELETE-запросы.
-     *
      * @throws IOException if troubles 'create' , 'bind' throws IOException
      */
     public HttpTaskServer() throws IOException {
@@ -43,12 +33,12 @@ public class HttpTaskServer {
         this.httpServer = HttpServer.create();
 
         httpServer.bind(new InetSocketAddress(PORT), 0);
+        httpServer.createContext("/tasks/", new OwnerHandler(manager));
         httpServer.createContext("/tasks/task/", new TaskHandler(manager));
         httpServer.createContext("/tasks/subtask/", new SubTaskHandler(manager));
         httpServer.createContext("/tasks/subtask/epic/", new SubTaskByEpicHandler(manager));
-        httpServer.createContext("/tasks/subtask/", new EpicHandler(manager));
+        httpServer.createContext("/tasks/epic/", new EpicHandler(manager));
         httpServer.createContext("/tasks/history/", new HistoryHandler(manager));
-        httpServer.createContext("/tasks/", new OwnerHandler(manager));
     }
 
     public void start() {

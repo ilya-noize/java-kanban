@@ -1,7 +1,7 @@
 package http;
 
 import com.google.gson.*;
-import http.client.KVTaskClient;
+import http.server.KVTaskClient;
 import manager.FileBackedTasksManager;
 import manager.HistoryManager;
 import tasks.Epic;

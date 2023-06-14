@@ -12,14 +12,7 @@ import static http.Config.PORTS.KV;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
- * <h6>Постман: <a href="https://www.getpostman.com/collections/a83b61d9e1c81c10575c">link</a></h6>
- * KVServer — это хранилище, где данные хранятся по принципу <Key-Value>:
- * <ul>
- *     <li>GET /register — регистрировать клиента и выдавать уникальный токен доступа (аутентификации).
- *     Это нужно, чтобы хранилище могло работать сразу с несколькими клиентами.</li>
- *     <li>POST /save/<ключ>?API_TOKEN= — сохранять содержимое тела запроса, привязанное к ключу.</li>
- *     <li>GET /load/<ключ>?API_TOKEN= — возвращать сохранённые значение по ключу.</li>
- * </ul>
+ * <h3>Постман: <a href="https://www.getpostman.com/collections/a83b61d9e1c81c10575c">link</a></h3>
  */
 public class KVServer {
     public static final int PORT = KV.get();
