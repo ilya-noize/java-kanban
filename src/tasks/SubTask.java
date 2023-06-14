@@ -29,8 +29,12 @@ public class SubTask extends Task{
         return epicId;
     }
 
+    public void setEpicId(int epicId) {
+        this.epicId = epicId;
+    }
+
     @Override
-    public TypeTask getType(){
+    public TypeTask getType() {
         return SUBTASK;
     }
 
@@ -58,6 +62,6 @@ public class SubTask extends Task{
                 + this.getDescription() + "',"
                 + this.getStartTimeToString() + ","
                 + this.getDurationToString() + ","
-                + this.getEpicId() + "\n";
+                + this.getEpicId() + "";
     }
 }

@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
-import static tasks.Status.*;
+import static tasks.Status.NEW;
 import static tasks.TypeTask.TASK;
 
 /**
@@ -145,7 +145,7 @@ public class Task {
                 + this.getStatus() + ",'"
                 + this.getDescription() + "','"
                 + this.getStartTimeToString() + "','"
-                + this.getDurationToString() + "',\n";
+                + this.getDurationToString() + "',";
     }
 }
 

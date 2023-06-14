@@ -74,6 +74,6 @@ public class Epic extends Task {
                 + this.getStatus() + ",'"
                 + this.getDescription() + "','"
                 + this.getStartTimeToString() + "','"
-                + this.getDurationToString() + "',\n";
+                + this.getDurationToString() + "',";
     }
 }
