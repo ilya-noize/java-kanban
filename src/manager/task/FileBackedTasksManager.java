@@ -29,16 +29,15 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         this.file = new File(TASKS_CSV);
     }
 
-    private boolean prepareFile(){
+    private void prepareFile() {
         if (file.exists()) {
             file.delete();
         }
         try {
-            return file.createNewFile();
+            file.createNewFile();
         } catch (IOException e) {
             throw new ManagerException("Не удалось создать файл ");
         }
-
     }
 
     /**
@@ -79,7 +78,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     recoveredTasks(line);
                 } else if (!historySeparatorIsOver) {
                     historySeparatorIsOver = true;
-                } else if (!line.isBlank()){
+                } else if (!line.isBlank()) {
                     historyFromString(line);
                 }
             }
@@ -142,6 +141,18 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             return epics.get(id);
         }
         return new Task();
+    }
+
+    public void newEpic(Epic epic) {
+        super.addEpic(epic);
+    }
+
+    public void newSubTask(SubTask subTask) {
+        super.addSubTask(subTask);
+    }
+
+    public void newTask(Task task) {
+        super.addTask(task);
     }
 
     @Override
