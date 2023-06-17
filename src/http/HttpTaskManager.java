@@ -34,7 +34,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
             JsonArray jsonTasksArray = jsonTasks.getAsJsonArray();
             for (JsonElement jsonTask : jsonTasksArray) {
                 Task task = gson.fromJson(jsonTask, Task.class);
-                this.addTask(task);
+                newTask(task);
             }
         }
 
@@ -43,7 +43,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
             JsonArray jsonEpicsArray = jsonEpics.getAsJsonArray();
             for (JsonElement jsonEpic : jsonEpicsArray) {
                 Epic task = gson.fromJson(jsonEpic, Epic.class);
-                this.addEpic(task);
+                newEpic(task);
             }
         }
 
@@ -52,7 +52,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
             JsonArray jsonSubTasksArray = jsonSubTasks.getAsJsonArray();
             for (JsonElement jsonSubtask : jsonSubTasksArray) {
                 SubTask task = gson.fromJson(jsonSubtask, SubTask.class);
-                this.addSubTask(task);
+                newSubTask(task);
             }
         }
 
@@ -61,12 +61,12 @@ public class HttpTaskManager extends FileBackedTasksManager {
             JsonArray jsonHistoryArray = jsonHistoryList.getAsJsonArray();
             for (JsonElement jsonTaskId : jsonHistoryArray) {
                 int id = jsonTaskId.getAsInt();
-                if (this.epics.containsKey(id)) {
-                    this.getEpic(id);
-                } else if (this.subtasks.containsKey(id)) {
-                    this.getSubTask(id);
-                } else if (this.tasks.containsKey(id)) {
-                    this.getTask(id);
+                if (epics.containsKey(id)) {
+                    getEpic(id);
+                } else if (subtasks.containsKey(id)) {
+                    getSubTask(id);
+                } else if (tasks.containsKey(id)) {
+                    getTask(id);
                 }
             }
         }
@@ -77,9 +77,11 @@ public class HttpTaskManager extends FileBackedTasksManager {
         client.put(TASKS, gson.toJson(tasks.values()));
         client.put(SUBTASKS, gson.toJson(subtasks.values()));
         client.put(EPICS, gson.toJson(epics.values()));
-        client.put(HISTORY, gson.toJson(this.getHistory()
+        client.put(HISTORY, gson.toJson(getHistory()
                 .stream()
                 .map(Task::getId)
                 .collect(Collectors.toList())));
     }
+
+
 }
