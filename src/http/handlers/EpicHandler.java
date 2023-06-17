@@ -92,7 +92,6 @@ public class EpicHandler implements HttpHandler {
                     } catch (StringIndexOutOfBoundsException e) {
                         response = "В запросе отсутствует необходимый параметр id";
                     } catch (NumberFormatException e) {
-
                         response = "Неверный формат id";
                     }
                 }

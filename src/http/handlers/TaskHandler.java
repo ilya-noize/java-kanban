@@ -65,8 +65,8 @@ public class TaskHandler implements HttpHandler {
                     Task task = gson.fromJson(bodyRequest, Task.class);
                     int id = task.getId();
                     if (taskManager.getTask(id) != null) {
-                        taskManager.updateTask(task);
                         statusCode = 201;
+                        taskManager.updateTask(task);
                         response = "Задача с id=" + id + " обновлена";
                     } else {
                         statusCode = 201;
@@ -107,19 +107,4 @@ public class TaskHandler implements HttpHandler {
             os.write(response.getBytes());
         }
     }
-    //todo
-    /*
-    @Override
-    public void handle(HttpExchange exchange) throws IOException {
-        HttpClient client = HttpClient.newHttpClient();
-        URI url = URI.create("http://localhost:8080/tasks/task/");
-        HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
-        try {
-            //HttpResponse<String> response =
-            client.send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-    }
-    */
 }

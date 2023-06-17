@@ -63,8 +63,8 @@ public class SubTaskHandler implements HttpHandler {
                     SubTask subTask = gson.fromJson(bodyRequest, SubTask.class);
                     int id = subTask.getId();
                     if (taskManager.getSubTask(id) != null) {
-                        taskManager.updateTask(subTask);
                         statusCode = 200;
+                        taskManager.updateTask(subTask);
                         response = "Подзадача с id=" + id + " обновлена";
                     } else {
                         statusCode = 201;
