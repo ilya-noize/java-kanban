@@ -2,7 +2,7 @@ package http;
 
 public class Config {
     public enum PORTS {
-        Server(8078),
+        KV(8078),
         HTTP(8080);
 
         final int port;
