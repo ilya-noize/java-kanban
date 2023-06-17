@@ -69,7 +69,7 @@ public class TaskHandler implements HttpHandler {
                         taskManager.updateTask(task);
                         response = "Задача с id=" + id + " обновлена";
                     } else {
-                        statusCode = 201;
+                        statusCode = 200;
                         Task newTask = taskManager.addTask(task);
                         System.out.println("CREATED TASK: " + newTask);
                         response = "Создана задача с id=" + newTask.getId();
