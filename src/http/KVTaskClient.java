@@ -10,16 +10,14 @@ import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 
+import static http.KVServer.*;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class KVTaskClient {
-    private final String serverURL;
     private final String apiToken;
 
-    public KVTaskClient(String serverURL) throws IOException, InterruptedException {
-        this.serverURL = serverURL;
-
-        URI uri = URI.create(this.serverURL + "/register");
+    public KVTaskClient() throws IOException, InterruptedException {
+        URI uri = URI.create(KV_HOST + REGISTER_PATH);
 
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
@@ -38,7 +36,7 @@ public class KVTaskClient {
     }
 
     public void put(String key, String json) {
-        URI uri = URI.create(this.serverURL + "/save/" + key + "?API_TOKEN=" + apiToken);
+        URI uri = URI.create(KV_HOST + SAVE_PATH + "/" + key + "?API_TOKEN=" + apiToken);
 
         HttpRequest.BodyPublisher body = BodyPublishers.ofString(json);
         HttpRequest request = HttpRequest.newBuilder()
@@ -60,7 +58,7 @@ public class KVTaskClient {
     }
 
     public String load(String key) {
-        URI uri = URI.create(this.serverURL + "/load/" + key + "?API_TOKEN=" + apiToken);
+        URI uri = URI.create(KV_HOST + LOAD_PATH + "/" + key + "?API_TOKEN=" + apiToken);
 
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
