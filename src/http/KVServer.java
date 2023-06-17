@@ -29,37 +29,39 @@ public class KVServer {
     }
 
     private void load(HttpExchange httpExchange) throws IOException {
-        // TODO Добавьте получение значения по ключу
-        System.out.println("\n/load");
-        if (!hasAuth(httpExchange)) {
-            System.out.println("Запрос не авторизован, нужен параметр в query API_TOKEN со значением API-ключа");
-            httpExchange.sendResponseHeaders(403, 0);
+        try {
+            System.out.println("\n/load");
+            if (!hasAuth(httpExchange)) {
+                System.out.println("Запрос не авторизован, нужен параметр в query API_TOKEN со значением API-ключа");
+                httpExchange.sendResponseHeaders(403, 0);
+                httpExchange.close();
+                return;
+            }
+            if ("GET".equals(httpExchange.getRequestMethod())) {
+                String key = httpExchange.getRequestURI().getPath().substring("/load/".length());
+                if (key.isEmpty()) {
+                    System.out.println("Key для сохранения пустой. Key указывается в пути: /load/{key}");
+                    httpExchange.sendResponseHeaders(400, 0);
+                    httpExchange.close();
+                    return;
+                }
+                if (data.get(key) == null) {
+                    System.out.println("Не могу достать данные для ключа '" + key + "', данные отсутствуют");
+                    httpExchange.sendResponseHeaders(404, 0);
+                    httpExchange.close();
+                    return;
+                }
+                String response = data.get(key);
+                sendText(httpExchange, response);
+                System.out.println("Значение для ключа " + key + " успешно отправлено в ответ на запрос!");
+                httpExchange.sendResponseHeaders(200, 0);
+            } else {
+                System.out.println("/load ждет GET-запрос, а получил: " + httpExchange.getRequestMethod());
+                httpExchange.sendResponseHeaders(405, 0);
+            }
+        } finally {
             httpExchange.close();
-            return;
         }
-        if ("GET".equals(httpExchange.getRequestMethod())) {
-            String key = httpExchange.getRequestURI().getPath().substring("/load/".length());
-            if (key.isEmpty()) {
-                System.out.println("Key для сохранения пустой. Key указывается в пути: /load/{key}");
-                httpExchange.sendResponseHeaders(400, 0);
-                httpExchange.close();
-                return;
-            }
-            if (data.get(key) == null) {
-                System.out.println("Не могу достать данные для ключа '" + key + "', данные отсутствуют");
-                httpExchange.sendResponseHeaders(404, 0);
-                httpExchange.close();
-                return;
-            }
-            String response = data.get(key);
-            sendText(httpExchange, response);
-            System.out.println("Значение для ключа " + key + " успешно отправлено в ответ на запрос!");
-            httpExchange.sendResponseHeaders(200, 0);
-        } else {
-            System.out.println("/load ждет GET-запрос, а получил: " + httpExchange.getRequestMethod());
-            httpExchange.sendResponseHeaders(405, 0);
-        }
-        httpExchange.close();
     }
 
     private void save(HttpExchange httpExchange) throws IOException {

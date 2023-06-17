@@ -1,6 +1,7 @@
 package http;
 
 import com.google.gson.*;
+import exception.ManagerException;
 import manager.history.HistoryManager;
 import manager.task.FileBackedTasksManager;
 import tasks.Epic;
@@ -74,13 +75,17 @@ public class HttpTaskManager extends FileBackedTasksManager {
 
     @Override
     public void save() {
-        client.put(TASKS, gson.toJson(tasks.values()));
-        client.put(SUBTASKS, gson.toJson(subtasks.values()));
-        client.put(EPICS, gson.toJson(epics.values()));
-        client.put(HISTORY, gson.toJson(getHistory()
-                .stream()
-                .map(Task::getId)
-                .collect(Collectors.toList())));
+        try {
+            client.put(TASKS, gson.toJson(tasks.values()));
+            client.put(SUBTASKS, gson.toJson(subtasks.values()));
+            client.put(EPICS, gson.toJson(epics.values()));
+            client.put(HISTORY, gson.toJson(getHistory()
+                    .stream()
+                    .map(Task::getId)
+                    .collect(Collectors.toList())));
+        } catch (ManagerException e) {
+            throw new ManagerException("Критическая ошибка сохранения на сервер", e.getCause());
+        }
     }
 
 
