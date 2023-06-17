@@ -56,17 +56,21 @@ public class Main {
             httpTaskManager.getEpic(epic1.getId());
             httpTaskManager.getSubTask(subTask1.getId());
 
-            System.out.println("getAllTasks");
+            System.out.println("░ getAllTasks    ▲▼▲▼▲▼▲▼");
             System.out.println(gson.toJson(httpTaskManager.getAllTasks()));
-            System.out.println("getAllEpics");
+            System.out.println("░ getAllEpics    ▲▼▲▼▲▼▲▼");
             System.out.println(gson.toJson(httpTaskManager.getAllEpics()));
-            System.out.println("getAllSubTasks");
+            System.out.println("░ getAllSubTasks ▲▼▲▼▲▼▲▼");
             System.out.println(gson.toJson(httpTaskManager.getAllSubTasks()));
-            System.out.println("getCurrentManager");
+            System.out.println("░ getHistory     ▲▼▲▼▲▼▲▼");
+            System.out.println(gson.toJson(httpTaskManager.getHistory()));
+            System.out.println("░ getCurrentManager  ▲▼▲▼");
             System.out.println(httpTaskManager);
-            kv.stop();
+
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            kv.stop();
         }
     }
 }

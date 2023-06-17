@@ -361,7 +361,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public List<SubTask> getSubTasksByEpic(int epicId) {
         List<SubTask> subTasksByEpic = new ArrayList<>();
-        if (epics.containsKey(epicId)) { // todo Can't tested!
+        if (epics.containsKey(epicId)) {
             subTasksByEpic = getEpic(epicId).getSubTaskIds().stream()
                     .map(subtasks::get)
                     .collect(Collectors.toList());
